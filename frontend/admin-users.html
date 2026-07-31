@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Users</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(180deg, #f7fbf8 0%, #eef5f1 100%); color: #1d2c24; min-height: 100vh; }
+        .admin-topbar { background: linear-gradient(120deg, #102d20 0%, #1e5a38 100%); box-shadow: 0 18px 40px rgba(18, 53, 36, 0.18); }
+        .nav-pill { border-radius: 999px; }
+        .dashboard-card { border: 0; border-radius: 24px; box-shadow: 0 16px 36px rgba(22, 55, 38, 0.08); }
+        .toolbar-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+        .toolbar-grid .form-control, .toolbar-grid .form-select { border-radius: 14px; min-height: 46px; }
+        .table thead th { background: #f5f8f6; color: #456154; font-size: 0.78rem; letter-spacing: 0.05em; text-transform: uppercase; }
+        div.dataTables_wrapper div.dataTables_filter,
+        div.dataTables_wrapper div.dataTables_length {
+            margin-bottom: 1rem;
+        }
+        div.dataTables_wrapper div.dataTables_filter input,
+        div.dataTables_wrapper div.dataTables_length select {
+            border-radius: 12px;
+            border: 1px solid #d7e4db;
+        }
+        .dataTables_wrapper .pagination .page-link {
+            border-radius: 999px !important;
+            margin: 0 2px;
+        }
+        .user-chip { display: inline-flex; align-items: center; gap: 10px; }
+        .user-avatar { width: 42px; height: 42px; border-radius: 14px; background: linear-gradient(135deg, #d5eadc, #f2f7f3); color: #1f6f43; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; }
+        .pill-badge { border-radius: 999px; padding: 0.45rem 0.8rem; font-weight: 700; }
+        .empty-state { padding: 48px 20px; text-align: center; color: #6d7f75; }
+        .modal-content { border: 0; border-radius: 24px; overflow: hidden; }
+        .modal-header { background: #f3f8f4; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg admin-topbar">
+        <div class="container-fluid px-4 py-2">
+            <a class="navbar-brand fw-bold text-white" href="admin.html">
+                <i class="fas fa-user-shield me-2"></i>
+                Poultry Disease Admin
+            </a>
+            <div class="d-flex align-items-center ms-auto gap-2">
+                <a class="btn btn-sm btn-outline-light nav-pill" href="admin.html">Overview</a>
+                <a class="btn btn-sm btn-light nav-pill" href="admin-users.html">Users</a>
+                <a class="btn btn-sm btn-outline-light nav-pill" href="admin-detections.html">Detections</a>
+                <span class="badge bg-light text-dark px-3 py-2">
+                    <i class="fas fa-user-circle me-2"></i>
+                    <span id="adminName">Admin</span>
+                </span>
+                <button class="btn btn-sm btn-warning text-dark nav-pill" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-1"></i>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container-fluid px-4 py-4">
+        <section class="card dashboard-card">
+            <div class="card-body p-4">
+                <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+                    <div>
+                        <h1 class="h3 fw-bold mb-1">User Management</h1>
+                        <p class="text-muted mb-0">Manage admins and standard users on a dedicated page.</p>
+                    </div>
+                    <button class="btn btn-success rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#userModal" onclick="openAddUserModal()">
+                        <i class="fas fa-user-plus me-2"></i>
+                        Add User
+                    </button>
+                </div>
+
+                <div class="toolbar-grid mb-4">
+                    <input id="userSearch" class="form-control" type="search" placeholder="Search by name or email">
+                    <select id="userRoleFilter" class="form-select">
+                        <option value="">All Roles</option>
+                        <option value="admin">Admin</option>
+                        <option value="user">User</option>
+                    </select>
+                    <select id="userStatusFilter" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                    <button class="btn btn-outline-secondary rounded-pill" onclick="loadUsers()">
+                        <i class="fas fa-filter me-2"></i>
+                        Apply Filters
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table align-middle" id="usersDataTable">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Created Date</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr><td colspan="7" class="empty-state">Loading users...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 p-4">
+                    <div>
+                        <h3 class="h5 fw-bold mb-1" id="userModalTitle">Add User</h3>
+                        <p class="text-muted mb-0">Manage administrator and standard user accounts.</p>
+                    </div>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 pt-0">
+                    <form id="userForm">
+                        <input type="hidden" id="userIdField">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input id="userNameField" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input id="userEmailField" class="form-control" type="email" required>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Role</label>
+                                <select id="userRoleField" class="form-select" required>
+                                    <option value="user">User</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Status</label>
+                                <select id="userStatusField" class="form-select" required>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-label">Password</label>
+                            <input id="userPasswordField" class="form-control" type="password" placeholder="Leave blank when editing to keep current password">
+                        </div>
+                        <div id="userFormAlert" class="alert alert-danger d-none mt-3 mb-0"></div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 px-4 pb-4">
+                    <button class="btn btn-outline-secondary rounded-pill px-4" type="button" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-success rounded-pill px-4" type="button" onclick="submitUserForm()">Save User</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+    <script src="main.js"></script>
+    <script>
+        let userModal;
+        let usersTable;
+
+        async function ensureAdminSession() {
+            if (!localStorage.getItem('authToken')) {
+                window.location.href = 'login.html';
+                return null;
+            }
+            let me;
+            try {
+                me = await apiFetch('/api/me');
+            } catch (error) {
+                logout();
+                return null;
+            }
+            if (!me.success || !me.user || !me.user.is_admin) {
+                logout();
+                return null;
+            }
+            localStorage.setItem('loggedInUser', me.user.username);
+            localStorage.setItem('currentUser', JSON.stringify(me.user));
+            localStorage.setItem('isAdmin', 'true');
+            document.getElementById('adminName').textContent = me.user.username;
+            return me.user;
+        }
+
+        async function loadUsers() {
+            const params = new URLSearchParams();
+            const search = document.getElementById('userSearch').value.trim();
+            const role = document.getElementById('userRoleFilter').value;
+            const status = document.getElementById('userStatusFilter').value;
+            if (search) params.set('search', search);
+            if (role) params.set('role', role);
+            if (status) params.set('status', status);
+
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Loading users...</td></tr>';
+
+            const response = await apiFetch(`/api/admin/users?${params.toString()}`);
+            if (!response.success || !response.users.length) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No users match the current filters.</td></tr>';
+                refreshUsersDataTable();
+                return;
+            }
+
+            tbody.innerHTML = response.users.map(user => `
+                <tr>
+                    <td class="fw-semibold">#${user.id}</td>
+                    <td>
+                        <div class="user-chip">
+                            <span class="user-avatar">${getInitials(user.username)}</span>
+                            <div>
+                                <div class="fw-semibold">${escapeHtml(user.username)}</div>
+                                <div class="small text-muted">${user.detection_count} detections</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${escapeHtml(user.email)}</td>
+                    <td><span class="badge ${user.role === 'admin' ? 'bg-warning text-dark' : 'bg-light text-dark'} pill-badge">${capitalize(user.role)}</span></td>
+                    <td><span class="badge ${user.status === 'active' ? 'bg-success-subtle text-success-emphasis' : 'bg-secondary-subtle text-secondary-emphasis'} pill-badge">${capitalize(user.status)}</span></td>
+                    <td>${formatDate(user.created_at)}</td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-outline-primary rounded-pill me-1" onclick='openEditUserModal(${JSON.stringify(user).replace(/'/g, "&apos;")})'><i class="fas fa-pen"></i></button>
+                        <button class="btn btn-sm btn-outline-${user.status === 'active' ? 'warning' : 'success'} rounded-pill me-1" onclick="toggleUserStatus(${user.id}, '${user.status}')"><i class="fas fa-power-off"></i></button>
+                        <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="deleteUser(${user.id}, '${escapeJs(user.username)}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+            refreshUsersDataTable();
+        }
+
+        function refreshUsersDataTable() {
+            if (usersTable) {
+                usersTable.destroy();
+            }
+
+            usersTable = $('#usersDataTable').DataTable({
+                responsive: true,
+                pageLength: 5,
+                lengthMenu: [5, 10, 25, 50],
+                order: [[0, 'desc']],
+                columnDefs: [
+                    { orderable: false, targets: 6 }
+                ]
+            });
+        }
+
+        function openAddUserModal() {
+            document.getElementById('userModalTitle').textContent = 'Add User';
+            document.getElementById('userForm').reset();
+            document.getElementById('userIdField').value = '';
+            document.getElementById('userPasswordField').required = true;
+            hideUserAlert();
+        }
+
+        function openEditUserModal(user) {
+            const parsed = typeof user === 'string' ? JSON.parse(user) : user;
+            document.getElementById('userModalTitle').textContent = 'Edit User';
+            document.getElementById('userIdField').value = parsed.id;
+            document.getElementById('userNameField').value = parsed.username;
+            document.getElementById('userEmailField').value = parsed.email;
+            document.getElementById('userRoleField').value = parsed.role;
+            document.getElementById('userStatusField').value = parsed.status;
+            document.getElementById('userPasswordField').value = '';
+            document.getElementById('userPasswordField').required = false;
+            hideUserAlert();
+            userModal.show();
+        }
+
+        async function submitUserForm() {
+            const id = document.getElementById('userIdField').value;
+            const payload = {
+                username: document.getElementById('userNameField').value.trim(),
+                email: document.getElementById('userEmailField').value.trim(),
+                role: document.getElementById('userRoleField').value,
+                status: document.getElementById('userStatusField').value,
+                password: document.getElementById('userPasswordField').value
+            };
+
+            if (!payload.username || !payload.email || (!id && !payload.password)) {
+                showUserAlert('Please complete all required fields.');
+                return;
+            }
+
+            const response = await apiFetch(id ? `/api/admin/users/${id}` : '/api/admin/users', {
+                method: id ? 'PUT' : 'POST',
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.success) {
+                showUserAlert(response.message || 'Failed to save user.');
+                return;
+            }
+
+            userModal.hide();
+            await loadUsers();
+        }
+
+        async function toggleUserStatus(userId, currentStatus) {
+            const nextStatus = currentStatus === 'active' ? 'inactive' : 'active';
+            if (!confirm(`Set this user to ${nextStatus}?`)) return;
+            const response = await apiFetch(`/api/admin/users/${userId}/status`, {
+                method: 'PATCH',
+                body: JSON.stringify({ status: nextStatus })
+            });
+            if (!response.success) {
+                alert(response.message || 'Failed to update user status.');
+                return;
+            }
+            await loadUsers();
+        }
+
+        async function deleteUser(userId, username) {
+            if (!confirm(`Delete user "${username}"? This action cannot be undone.`)) return;
+            const response = await apiFetch(`/api/admin/users/${userId}`, { method: 'DELETE' });
+            if (!response.success) {
+                alert(response.message || 'Failed to delete user.');
+                return;
+            }
+            await loadUsers();
+        }
+
+        function showUserAlert(message) {
+            const alertBox = document.getElementById('userFormAlert');
+            alertBox.textContent = message;
+            alertBox.classList.remove('d-none');
+        }
+
+        function hideUserAlert() {
+            const alertBox = document.getElementById('userFormAlert');
+            alertBox.textContent = '';
+            alertBox.classList.add('d-none');
+        }
+
+        function formatDate(value) {
+            return new Date(value).toLocaleDateString();
+        }
+
+        function getInitials(name) {
+            return (name || 'U').split(' ').map(part => part[0]).join('').slice(0, 2).toUpperCase();
+        }
+
+        function capitalize(value) {
+            if (!value) return '';
+            return value.charAt(0).toUpperCase() + value.slice(1);
+        }
+
+        function escapeHtml(value) {
+            return String(value || '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+        }
+
+        function escapeJs(value) {
+            return String(value || '').replaceAll('\\', '\\\\').replaceAll("'", "\\'");
+        }
+
+        window.addEventListener('load', async function () {
+            userModal = new bootstrap.Modal(document.getElementById('userModal'));
+            const user = await ensureAdminSession();
+            if (!user) return;
+            await loadUsers();
+        });
+    </script>
+</body>
+</html>

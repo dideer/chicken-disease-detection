@@ -1,0 +1,9 @@
+flask
+flask-bcrypt
+flask-cors
+psycopg2-binary
+tensorflow
+numpy
+Pillow
+gdown==4.6.3
+gunicorn

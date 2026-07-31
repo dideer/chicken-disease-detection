@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chicken Disease Detection - Result</title>
+    
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom styles -->
+    <link href="style.css" rel="stylesheet">
+    <!-- Translations — must load first -->
+    <script src="lang.js"></script>
+
+    <style>
+        .disease-header {
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .disease-header.detected {
+            background-color: #fadbd8;
+            border-left: 5px solid #c0392b;
+        }
+        .disease-header.healthy {
+            background-color: #d5f4e6;
+            border-left: 5px solid #27ae60;
+        }
+        .disease-badge {
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+        .disease-badge.detected {
+            background-color: #c0392b;
+            color: white;
+        }
+        .disease-badge.healthy {
+            background-color: #27ae60;
+            color: white;
+        }
+        .disease-name {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .disease-description {
+            font-size: 1rem;
+            color: #555;
+            margin: 10px 0;
+        }
+        .confidence-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+        }
+        .confidence-item {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .confidence-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .confidence-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .confidence-bar {
+            height: 20px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .confidence-bar-fill {
+            height: 100%;
+            transition: width 0.8s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border-radius: 10px;
+        }
+        .image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .treatment-card {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #e9ecef;
+            border-left: 4px solid #1a6b3c;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .treatment-card.healthy-tips {
+            border-left-color: #27ae60;
+        }
+        .treatment-card .tip-icon {
+            color: #27ae60;
+            font-size: 1.1rem;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        .treatment-card .tip-text {
+            font-size: 0.95rem;
+            color: #333;
+            line-height: 1.5;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 5px solid #f39c12;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .warning-title {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 8px;
+        }
+        .warning-text {
+            color: #856404;
+            font-size: 0.95rem;
+        }
+        .urgency-box {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        .urgency-high {
+            background-color: #fadbd8;
+            color: #c0392b;
+            border-left: 5px solid #c0392b;
+        }
+        .urgency-medium {
+            background-color: #fdebd0;
+            color: #e67e22;
+            border-left: 5px solid #e67e22;
+        }
+        .urgency-none {
+            background-color: #d5f4e6;
+            color: #27ae60;
+            border-left: 5px solid #27ae60;
+        }
+        .symptoms-box {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+        }
+        .result-meta {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        /* Print styles */
+        @media print {
+            .navbar, .no-print { display: none !important; }
+            .container { max-width: 100% !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg" style="background-color: #1a6b3c;">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center"
+               href="dashboard.html"
+               style="color: white; font-weight: bold;">
+                <i class="fas fa-feather me-2" style="font-size: 1.5rem;"></i>
+                <span data-lang-key="app_name">Chicken Disease Detection</span>
+            </a>
+
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"
+                      style="background-image: url('data:image/svg+xml,%3csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 30 30%22%3e%3cpath stroke=%22white%22 stroke-linecap=%22round%22 stroke-miterlimit=%2210%22 stroke-width=%222%22 d=%22M4 7h22M4 15h22M4 23h22%22/%3e%3c/svg%3e');"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-end"
+                 id="navbarContent">
+                <!-- Language Switcher -->
+                <div class="btn-group me-3" role="group">
+                    <button class="btn btn-sm btn-outline-light"
+                            onclick="switchLanguage('en')">EN</button>
+                    <button class="btn btn-sm btn-outline-light"
+                            onclick="switchLanguage('rw')">RW</button>
+                    <button class="btn btn-sm btn-outline-light"
+                            onclick="switchLanguage('fr')">FR</button>
+                </div>
+
+                <!-- User Info -->
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-light text-dark me-3">
+                        <i class="fas fa-user-circle me-2"></i>
+                        <span id="userDisplay"></span>
+                    </span>
+                    <button class="btn btn-sm btn-outline-light"
+                            onclick="logout()"
+                            data-lang-key="logout_btn">
+                        <i class="fas fa-sign-out-alt me-1"></i>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container py-5">
+
+        <h1 class="mb-5 fw-bold text-center" data-lang-key="result_title">
+            Detection Result
+        </h1>
+
+        <div class="row">
+
+            <!-- LEFT COLUMN: Image + Disease Header -->
+            <div class="col-lg-6 mb-4">
+
+                <!-- Disease Header -->
+                <div id="diseaseHeader" class="disease-header"></div>
+
+                <!-- Uploaded Image -->
+                <div class="text-center">
+                    <img id="uploadedImage"
+                         class="image-preview"
+                         alt="Analyzed chicken image">
+                </div>
+
+                <!-- Meta Info -->
+                <div class="result-meta">
+                    <i class="fas fa-user me-2"></i>
+                    <span data-lang-key="scanned_by">Scanned by</span>:
+                    <strong id="metaUser"></strong>
+                    &nbsp;&nbsp;
+                    <i class="fas fa-clock me-2"></i>
+                    <span id="metaTime"></span>
+                </div>
+
+                <!-- Urgency -->
+                <div id="urgencyBox" class="urgency-box"></div>
+
+                <!-- Symptoms -->
+                <div class="symptoms-box">
+                    <h6 class="fw-bold mb-2">
+                        <i class="fas fa-stethoscope me-2 text-success"></i>
+                        <span data-lang-key="symptoms_title">Symptoms</span>
+                    </h6>
+                    <p class="mb-0" id="symptomsText"></p>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: Confidence + Warning + Treatment -->
+            <div class="col-lg-6">
+
+                <!-- Confidence Scores -->
+                <div class="confidence-container">
+                    <h5 class="mb-4 fw-bold"
+                        data-lang-key="confidence_scores">
+                        Confidence Scores
+                    </h5>
+                    <div id="confidenceList"></div>
+                </div>
+
+                <!-- Warning Box -->
+                <div class="warning-box">
+                    <div class="warning-title">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <span data-lang-key="warning_title">Important</span>
+                    </div>
+                    <p class="warning-text mb-0" id="warningText"></p>
+                </div>
+
+                <!-- Treatment / Care -->
+                <div id="treatmentContainer"></div>
+
+                <!-- Action Buttons -->
+                <div class="d-grid gap-2 mt-4 no-print">
+                    <button class="btn btn-lg"
+                            style="background-color: #1a6b3c;
+                                   color: white;
+                                   font-weight: bold;"
+                            onclick="scanAnother()">
+                        <i class="fas fa-camera me-2"></i>
+                        <span data-lang-key="scan_another_btn">
+                            Scan Another Chicken
+                        </span>
+                    </button>
+                    <button class="btn btn-outline-success btn-lg"
+                            onclick="printResult()">
+                        <i class="fas fa-print me-2"></i>
+                        <span data-lang-key="print_btn">Print Result</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Main JS -->
+    <script src="main.js"></script>
+
+    <script>
+    // ================================================
+    // GET TRANSLATION USING lang.js
+    // ================================================
+    function t(key) {
+        return getTranslation(key) || key;
+    }
+
+    // ================================================
+    // PAGE LOAD
+    // ================================================
+    window.addEventListener('load', function () {
+        loadLanguage();
+
+        const username = localStorage.getItem('loggedInUser');
+        document.getElementById('userDisplay').textContent =
+            username || 'Guest';
+        document.getElementById('metaUser').textContent =
+            username || 'Guest';
+        document.getElementById('metaTime').textContent =
+            new Date().toLocaleString();
+
+        loadResult();
+    });
+
+    // ================================================
+    // LOAD AND DISPLAY RESULT
+    // ================================================
+    function loadResult() {
+        const resultData = localStorage.getItem('detectionResult');
+        const uploadedImage = localStorage.getItem('uploadedImage');
+
+        if (!resultData) {
+            alert('No detection result found');
+            window.location.href = 'dashboard.html';
+            return;
+        }
+
+        const result     = JSON.parse(resultData);
+        const diseaseKey = result.disease.toLowerCase();
+        const isHealthy  = diseaseKey === 'healthy';
+        const confidence = result.confidence;
+        const probs      = result.allConfidences || {};
+
+        // ---- Image ----
+        const imgEl = document.getElementById('uploadedImage');
+        if (uploadedImage) {
+            imgEl.src = uploadedImage;
+        } else if (result.image_name) {
+            imgEl.src = `/uploads/${result.image_name}`;
+        }
+
+        // ---- Disease Header ----
+        const header = document.getElementById('diseaseHeader');
+        header.className = 'disease-header ' +
+                           (isHealthy ? 'healthy' : 'detected');
+        header.innerHTML = `
+            <div class="disease-badge ${isHealthy ? 'healthy' : 'detected'}">
+                ${t(isHealthy ? 'badge_healthy' : 'badge_disease')}
+            </div>
+            <div class="disease-name">
+                ${t('disease_' + diseaseKey)}
+            </div>
+            <div class="disease-description">
+                ${t('desc_' + diseaseKey)}
+            </div>
+            <div class="mt-3">
+                <span class="fs-3 fw-bold"
+                      style="color: ${isHealthy ? '#27ae60' : '#c0392b'}">
+                    ${confidence}%
+                </span>
+                <span class="text-muted ms-2 fs-6">confidence</span>
+            </div>
+        `;
+
+        // ---- Urgency Box ----
+        const urgencyBox = document.getElementById('urgencyBox');
+        const urgencyClass = isHealthy ? 'urgency-none' :
+            diseaseKey === 'crd' ? 'urgency-high' : 'urgency-medium';
+        urgencyBox.className = `urgency-box ${urgencyClass}`;
+        urgencyBox.innerHTML = `
+            <i class="fas fa-clock me-2"></i>
+            ${t('urgency_' + (isHealthy ? 'none' :
+                diseaseKey === 'crd' ? 'high' : 'medium'))}
+        `;
+
+        // ---- Symptoms ----
+        document.getElementById('symptomsText').textContent =
+            t('symptoms_' + diseaseKey);
+
+        // ---- Warning ----
+        document.getElementById('warningText').textContent =
+            t('warning_' + diseaseKey);
+
+        // ---- Confidence Bars ----
+        const confidenceList = document.getElementById('confidenceList');
+        confidenceList.innerHTML = '';
+
+        const displayNames = {
+            crd:      'CRD',
+            fowlpox:  'Fowl Pox',
+            healthy:  t('healthy')
+        };
+
+        const barColors = {
+            crd:     '#c0392b',
+            fowlpox: '#e67e22',
+            healthy: '#27ae60'
+        };
+
+        for (const [key, score] of Object.entries(probs)) {
+            const k      = key.toLowerCase();
+            const isMax  = k === diseaseKey;
+            const color  = barColors[k] || '#1a6b3c';
+            const name   = displayNames[k] || key;
+
+            confidenceList.innerHTML += `
+                <div class="confidence-item">
+                    <div class="confidence-label">
+                        <span class="fw-bold">${name}</span>
+                        <span class="fw-bold" style="color:${color}">
+                            ${score}%
+                        </span>
+                    </div>
+                    <div class="confidence-bar">
+                        <div class="confidence-bar-fill"
+                             style="width:${score}%;
+                                    background-color:${color};
+                                    opacity:${isMax ? '1' : '0.45'}">
+                            ${score > 12 ? score + '%' : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ---- Treatment / Care ----
+        const container  = document.getElementById('treatmentContainer');
+        const isHealthyCard = isHealthy;
+        const titleKey   = isHealthy ? 'care_title' : 'treatment_title';
+        const icon       = isHealthy ? 'leaf' : 'pills';
+        const cardClass  = isHealthy ? 'healthy-tips' : '';
+
+        // Build treatment list from lang.js keys
+        const treatmentKeys = [1, 2, 3, 4, 5, 6].map(
+            n => `treatment_${diseaseKey}_${n}`
+        );
+
+        let html = `
+            <h5 class="fw-bold mb-3">
+                <i class="fas fa-${icon} me-2 text-success"></i>
+                ${t(titleKey)}
+            </h5>
+        `;
+
+        treatmentKeys.forEach(key => {
+            const text = t(key);
+            // Only show if translation exists
+            if (text && text !== key) {
+                html += `
+                    <div class="treatment-card ${cardClass}">
+                        <i class="fas fa-check-circle tip-icon"></i>
+                        <span class="tip-text">${text}</span>
+                    </div>
+                `;
+            }
+        });
+
+        container.innerHTML = html;
+    }
+
+    // ================================================
+    // ACTIONS
+    // ================================================
+    function scanAnother() {
+        localStorage.removeItem('uploadedImage');
+        localStorage.removeItem('detectionResult');
+        window.location.href = 'dashboard.html';
+    }
+
+    function printResult() {
+        window.print();
+    }
+
+    function logout() {
+        localStorage.removeItem('loggedInUser');
+        localStorage.removeItem('uploadedImage');
+        localStorage.removeItem('detectionResult');
+        window.location.href = 'login.html';
+    }
+    </script>
+</body>
+</html>

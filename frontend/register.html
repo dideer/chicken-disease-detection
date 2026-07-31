@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chicken Disease Detection - Register</title>
+    
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Custom styles -->
+    <link href="style.css" rel="stylesheet">
+    
+    <!-- Translations -->
+    <script src="lang.js"></script>
+
+    <style>
+        /* Password strength bar styling */
+        .strength-bar {
+            height: 8px;
+            border-radius: 4px;
+            margin-top: 8px;
+            background-color: #e9ecef;
+            overflow: hidden;
+        }
+
+        .strength-bar-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s, background-color 0.3s;
+        }
+
+        /* Strength levels */
+        .strength-weak { background-color: #c0392b; } /* Red */
+        .strength-fair { background-color: #f39c12; } /* Amber */
+        .strength-good { background-color: #27ae60; } /* Green */
+        .strength-strong { background-color: #1a6b3c; } /* Dark green */
+
+        .validation-icon {
+            position: absolute;
+            right: 12px;
+            top: 38px;
+            font-size: 1.2rem;
+        }
+
+        .is-valid .validation-icon {
+            color: #27ae60;
+        }
+
+        .is-invalid .validation-icon {
+            color: #c0392b;
+        }
+
+        .form-control-wrapper {
+            position: relative;
+        }
+
+        .invalid-feedback {
+            display: block;
+            color: #c0392b;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body class="bg-light d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5 col-lg-4">
+                <!-- Language Switcher (top of page) -->
+                <div class="text-center mb-4">
+                    <button class="btn btn-sm btn-outline-secondary me-2" onclick="switchLanguage('en')">EN</button>
+                    <button class="btn btn-sm btn-outline-secondary me-2" onclick="switchLanguage('rw')">RW</button>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="switchLanguage('fr')">FR</button>
+                </div>
+
+                <!-- Register Card -->
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-5">
+                        <!-- Icon and Title -->
+                        <div class="text-center mb-4">
+                            <i class="fas fa-clipboard" style="font-size: 3rem; color: #1a6b3c;"></i>
+                            <h2 class="mt-3" data-lang-key="register_title">Create Account</h2>
+                        </div>
+
+                        <!-- Register Form -->
+                        <form id="registerForm">
+                            <!-- Username Field -->
+                            <div class="mb-3 form-control-wrapper">
+                                <label class="form-label fw-bold" data-lang-key="username">Username</label>
+                                <input 
+                                    type="text" 
+                                    class="form-control form-control-lg" 
+                                    id="regUsername"
+                                    placeholder="john_farmer"
+                                    minlength="3"
+                                    maxlength="20"
+                                    required>
+                                <div class="invalid-feedback d-none" id="usernameError">
+                                    <i class="fas fa-times-circle me-1"></i>
+                                    <span data-lang-key="username_error">Username must be 3-20 characters</span>
+                                </div>
+                                <i class="fas fa-check validation-icon d-none" id="usernameCheck"></i>
+                            </div>
+
+                            <!-- Email Field -->
+                            <div class="mb-3 form-control-wrapper">
+                                <label class="form-label fw-bold" data-lang-key="email">Email</label>
+                                <input 
+                                    type="email" 
+                                    class="form-control form-control-lg" 
+                                    id="regEmail"
+                                    placeholder="john@farm.com"
+                                    required>
+                                <div class="invalid-feedback d-none" id="emailError">
+                                    <i class="fas fa-times-circle me-1"></i>
+                                    <span data-lang-key="email_error">Please enter a valid email</span>
+                                </div>
+                                <i class="fas fa-check validation-icon d-none" id="emailCheck"></i>
+                            </div>
+
+                            <!-- Password Field -->
+                            <div class="mb-1 form-control-wrapper">
+                                <label class="form-label fw-bold" data-lang-key="password">Password</label>
+                                <input 
+                                    type="password" 
+                                    class="form-control form-control-lg" 
+                                    id="regPassword"
+                                    placeholder="••••••••"
+                                    minlength="6"
+                                    required>
+                                <!-- Password Strength Bar (4 segments) -->
+                                <div class="strength-bar">
+                                    <div class="strength-bar-fill" id="strengthBarFill"></div>
+                                </div>
+                                <div class="invalid-feedback d-none" id="passwordError">
+                                    <i class="fas fa-times-circle me-1"></i>
+                                    <span data-lang-key="password_error">Password must be at least 6 characters</span>
+                                </div>
+                            </div>
+
+                            <!-- Password Strength Text -->
+                            <small class="text-muted d-block mb-3" id="strengthText">
+                                <span data-lang-key="strength_weak">Weak</span>
+                            </small>
+
+                            <!-- Confirm Password Field -->
+                            <div class="mb-3 form-control-wrapper">
+                                <label class="form-label fw-bold" data-lang-key="confirm_password">Confirm Password</label>
+                                <input 
+                                    type="password" 
+                                    class="form-control form-control-lg" 
+                                    id="regConfirmPassword"
+                                    placeholder="••••••••"
+                                    required>
+                                <div class="invalid-feedback d-none" id="confirmError">
+                                    <i class="fas fa-times-circle me-1"></i>
+                                    <span data-lang-key="password_mismatch">Passwords do not match</span>
+                                </div>
+                                <i class="fas fa-check validation-icon d-none" id="confirmCheck"></i>
+                            </div>
+
+                            <!-- Register Button -->
+                            <button 
+                                type="submit" 
+                                class="btn btn-lg w-100 mt-4" 
+                                style="background-color: #1a6b3c; color: white; font-weight: bold;"
+                                id="registerBtn"
+                                data-lang-key="create_account_btn">
+                                Create Account
+                            </button>
+                            
+                            <!-- Error Message -->
+                            <div id="registerError" class="alert alert-danger d-none mt-3" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                <span id="registerErrorMsg">Registration failed</span>
+                            </div>
+
+                            <!-- Success Message -->
+                            <div id="registerSuccess" class="alert alert-success d-none mt-3" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <span data-lang-key="register_success">Account created successfully! Redirecting to login...</span>
+                            </div>
+                        </form>
+
+                        <!-- Login Link -->
+                        <div class="text-center mt-4">
+                            <p class="mb-0">
+                                <span data-lang-key="have_account">Already have an account?</span>
+                                <a href="login.html" class="text-decoration-none fw-bold" style="color: #1a6b3c;" data-lang-key="login">Login here</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Main JS -->
+    <script src="main.js"></script>
+    
+    <!-- Register Page Logic -->
+    <script>
+        // Get all form inputs
+        const regUsername = document.getElementById('regUsername');
+        const regEmail = document.getElementById('regEmail');
+        const regPassword = document.getElementById('regPassword');
+        const regConfirmPassword = document.getElementById('regConfirmPassword');
+        const registerForm = document.getElementById('registerForm');
+
+        // Real-time validation for username
+        regUsername.addEventListener('blur', function() {
+            const usernameError = document.getElementById('usernameError');
+            const usernameCheck = document.getElementById('usernameCheck');
+            
+            if (this.value.length >= 3 && this.value.length <= 20) {
+                this.classList.add('is-valid');
+                this.classList.remove('is-invalid');
+                usernameCheck.classList.remove('d-none');
+                usernameError.classList.add('d-none');
+            } else if (this.value.length > 0) {
+                this.classList.add('is-invalid');
+                this.classList.remove('is-valid');
+                usernameCheck.classList.add('d-none');
+                usernameError.classList.remove('d-none');
+            }
+        });
+
+        // Real-time validation for email
+        regEmail.addEventListener('blur', function() {
+            const emailError = document.getElementById('emailError');
+            const emailCheck = document.getElementById('emailCheck');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (emailRegex.test(this.value)) {
+                this.classList.add('is-valid');
+                this.classList.remove('is-invalid');
+                emailCheck.classList.remove('d-none');
+                emailError.classList.add('d-none');
+            } else if (this.value.length > 0) {
+                this.classList.add('is-invalid');
+                this.classList.remove('is-valid');
+                emailCheck.classList.add('d-none');
+                emailError.classList.remove('d-none');
+            }
+        });
+
+        // Password strength calculator
+        function calculatePasswordStrength(password) {
+            let strength = 0;
+            
+            if (password.length >= 6) strength++;
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+            
+            return Math.min(strength, 4); // Max 4 levels
+        }
+
+        // Update password strength bar
+        regPassword.addEventListener('input', function() {
+            const strength = calculatePasswordStrength(this.value);
+            const strengthBar = document.getElementById('strengthBarFill');
+            const strengthText = document.getElementById('strengthText');
+            const strengthElement = strengthText.querySelector('[data-lang-key]');
+            
+            const strengthLevels = ['strength_weak', 'strength_fair', 'strength_good', 'strength_strong'];
+            
+            // Update bar width and color
+            const fillWidth = (strength / 4) * 100;
+            strengthBar.style.width = fillWidth + '%';
+            
+            // Update bar color
+            strengthBar.classList.remove('strength-weak', 'strength-fair', 'strength-good', 'strength-strong');
+            
+            if (strength === 0 || this.value === '') {
+                strengthBar.classList.add('strength-weak');
+                strengthElement.setAttribute('data-lang-key', 'strength_weak');
+            } else if (strength === 1) {
+                strengthBar.classList.add('strength-weak');
+                strengthElement.setAttribute('data-lang-key', 'strength_weak');
+            } else if (strength === 2) {
+                strengthBar.classList.add('strength-fair');
+                strengthElement.setAttribute('data-lang-key', 'strength_fair');
+            } else if (strength === 3) {
+                strengthBar.classList.add('strength-good');
+                strengthElement.setAttribute('data-lang-key', 'strength_good');
+            } else {
+                strengthBar.classList.add('strength-strong');
+                strengthElement.setAttribute('data-lang-key', 'strength_strong');
+            }
+            
+            // Apply current language to strength text
+            updateLanguageForElement(strengthElement);
+            
+            // Validate password length
+            const passwordError = document.getElementById('passwordError');
+            if (this.value.length < 6 && this.value.length > 0) {
+                this.classList.add('is-invalid');
+                passwordError.classList.remove('d-none');
+            } else if (this.value.length >= 6) {
+                this.classList.add('is-valid');
+                this.classList.remove('is-invalid');
+                passwordError.classList.add('d-none');
+            } else {
+                this.classList.remove('is-valid', 'is-invalid');
+                passwordError.classList.add('d-none');
+            }
+            
+            // Check confirm password match
+            validateConfirmPassword();
+        });
+
+        // Real-time validation for confirm password
+        function validateConfirmPassword() {
+            const confirmError = document.getElementById('confirmError');
+            const confirmCheck = document.getElementById('confirmCheck');
+            
+            if (regConfirmPassword.value === '' && regPassword.value === '') {
+                regConfirmPassword.classList.remove('is-valid', 'is-invalid');
+                confirmCheck.classList.add('d-none');
+                confirmError.classList.add('d-none');
+            } else if (regConfirmPassword.value === regPassword.value && regPassword.value !== '') {
+                regConfirmPassword.classList.add('is-valid');
+                regConfirmPassword.classList.remove('is-invalid');
+                confirmCheck.classList.remove('d-none');
+                confirmError.classList.add('d-none');
+            } else if (regConfirmPassword.value !== '') {
+                regConfirmPassword.classList.add('is-invalid');
+                regConfirmPassword.classList.remove('is-valid');
+                confirmCheck.classList.add('d-none');
+                confirmError.classList.remove('d-none');
+            }
+        }
+
+        regConfirmPassword.addEventListener('blur', validateConfirmPassword);
+        regConfirmPassword.addEventListener('input', validateConfirmPassword);
+
+        // ===== FORM SUBMISSION =====
+        
+        registerForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // ===== CLIENT-SIDE VALIDATION =====
+            
+            const isUsernameValid = regUsername.value.length >= 3 && regUsername.value.length <= 20;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const isEmailValid = emailRegex.test(regEmail.value);
+            const isPasswordValid = regPassword.value.length >= 6;
+            const isConfirmValid = regConfirmPassword.value === regPassword.value;
+            
+            const errorDiv = document.getElementById('registerError');
+            const errorMsg = document.getElementById('registerErrorMsg');
+            const successDiv = document.getElementById('registerSuccess');
+            const registerBtn = document.getElementById('registerBtn');
+            
+            if (!isUsernameValid || !isEmailValid || !isPasswordValid || !isConfirmValid) {
+                errorMsg.textContent = 'Please complete all fields correctly';
+                errorDiv.classList.remove('d-none');
+                successDiv.classList.add('d-none');
+                return;
+            }
+            
+            // Hide previous messages
+            errorDiv.classList.add('d-none');
+            successDiv.classList.add('d-none');
+            
+            // ===== DISABLE BUTTON & SHOW LOADING STATE =====
+            
+            registerBtn.disabled = true;
+            const originalText = registerBtn.textContent;
+            registerBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Creating account...';
+            
+            try {
+                // ===== SEND REGISTRATION REQUEST TO API =====
+                
+                const response = await apiFetch('/api/register', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        username: regUsername.value,
+                        email: regEmail.value,
+                        password: regPassword.value,
+                        confirm_password: regConfirmPassword.value
+                    })
+                });
+                
+                // ===== HANDLE API RESPONSE =====
+                
+                if (response.success) {
+                    // Show success message
+                    successDiv.classList.remove('d-none');
+                    
+                    // Redirect to login after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    // Show error message from API
+                    errorMsg.textContent = response.message || 'Registration failed. Please try again.';
+                    errorDiv.classList.remove('d-none');
+                    
+                    // Re-enable button
+                    registerBtn.disabled = false;
+                    registerBtn.textContent = originalText;
+                }
+            } catch (error) {
+                // Handle network errors
+                console.error('Registration error:', error);
+                errorMsg.textContent = error.message;
+                errorDiv.classList.remove('d-none');
+                
+                // Re-enable button
+                registerBtn.disabled = false;
+                registerBtn.textContent = originalText;
+            }
+        });
+
+        // ===== LOAD LANGUAGE ON PAGE LOAD =====
+        
+        window.addEventListener('load', function() {
+            loadLanguage();
+        });
+    </script>
+</body>
+</html>

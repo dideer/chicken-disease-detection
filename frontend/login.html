@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chicken Disease Detection - Login</title>
+    
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Custom styles -->
+    <link href="style.css" rel="stylesheet">
+    
+    <!-- Translations -->
+    <script src="lang.js"></script>
+</head>
+<body class="bg-light d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5 col-lg-4">
+                <!-- Language Switcher (top of page) -->
+                <div class="text-center mb-4">
+                    <button class="btn btn-sm btn-outline-secondary me-2" onclick="switchLanguage('en')">EN</button>
+                    <button class="btn btn-sm btn-outline-secondary me-2" onclick="switchLanguage('rw')">RW</button>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="switchLanguage('fr')">FR</button>
+                </div>
+
+                <!-- Login Card -->
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-5">
+                        <!-- Icon and Title -->
+                        <div class="text-center mb-4">
+                            <i class="fas fa-lock" style="font-size: 3rem; color: #1a6b3c;"></i>
+                            <h2 class="mt-3" data-lang-key="login_title">Welcome Back</h2>
+                        </div>
+
+                        <!-- Login Form -->
+                        <form id="loginForm">
+                            <!-- Username Field -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold" data-lang-key="username">Username</label>
+                                <input 
+                                    type="text" 
+                                    class="form-control form-control-lg" 
+                                    id="loginUsername"
+                                    placeholder="john_farmer"
+                                    required>
+                            </div>
+
+                            <!-- Password Field -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold" data-lang-key="password">Password</label>
+                                <input 
+                                    type="password" 
+                                    class="form-control form-control-lg" 
+                                    id="loginPassword"
+                                    placeholder="••••••••"
+                                    required>
+                            </div>
+
+                            <!-- Error Message -->
+                            <div id="loginError" class="alert alert-danger d-none" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                <span id="loginErrorMsg">Please fill in all fields</span>
+                            </div>
+
+                            <!-- Success Message -->
+                            <div id="loginSuccess" class="alert alert-success d-none" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <span data-lang-key="login_success">Login successful! Redirecting...</span>
+                            </div>
+
+                            <!-- Login Button -->
+                            <button 
+                                type="submit" 
+                                class="btn btn-lg w-100" 
+                                style="background-color: #1a6b3c; color: white; font-weight: bold;"
+                                id="loginBtn"
+                                data-lang-key="login_btn">
+                                Login
+                            </button>
+                        </form>
+
+                        <!-- Register Link -->
+                        <div class="text-center mt-4">
+                            <p class="mb-0">
+                                <span data-lang-key="no_account">Don't have an account?</span>
+                                <a href="register.html" class="text-decoration-none fw-bold" style="color: #1a6b3c;" data-lang-key="sign_up">Sign up here</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Demo Info -->
+                <div class="alert alert-info mt-4 text-center small" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <span data-lang-key="demo_info">Demo: Use any username and password</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Main JS -->
+    <script src="main.js"></script>
+    
+    <!-- Login Page Logic -->
+    <script>
+        // ===== HANDLE LOGIN FORM SUBMISSION =====
+        
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            const loginBtn = document.getElementById('loginBtn');
+            const errorDiv = document.getElementById('loginError');
+            const errorMsg = document.getElementById('loginErrorMsg');
+            const successDiv = document.getElementById('loginSuccess');
+            
+            // ===== CLIENT-SIDE VALIDATION =====
+            
+            if (username === '' || password === '') {
+                errorMsg.textContent = 'Please fill in all fields';
+                errorDiv.classList.remove('d-none');
+                successDiv.classList.add('d-none');
+                return;
+            }
+            
+            // Hide previous messages
+            errorDiv.classList.add('d-none');
+            successDiv.classList.add('d-none');
+            
+            // ===== DISABLE BUTTON & SHOW LOADING STATE =====
+            
+            loginBtn.disabled = true;
+            const originalText = loginBtn.textContent;
+            loginBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Logging in...';
+            
+            try {
+                // ===== SEND LOGIN REQUEST TO API =====
+                
+                const response = await apiFetch('/api/login', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+                
+                // ===== HANDLE API RESPONSE =====
+                
+                if (response.success) {
+                    // Save session data for dashboard and admin access.
+                    localStorage.setItem('authToken', response.token || 'local-session');
+                    localStorage.setItem('loggedInUser', username);
+                    localStorage.setItem('currentUser', JSON.stringify(response.user || { username }));
+                    localStorage.setItem(
+                        'isAdmin',
+                        response.user && response.user.is_admin ? 'true' : 'false'
+                    );
+
+                    // Show success message
+                    successDiv.classList.remove('d-none');
+                    
+                    // Redirect to dashboard after 1 second
+                    setTimeout(() => {
+                        window.location.href = response.user && response.user.is_admin
+                            ? 'admin.html'
+                            : 'dashboard.html';
+                    }, 1000);
+                } else {
+                    // Show error message from API
+                    errorMsg.textContent = response.message || 'Login failed. Please try again.';
+                    errorDiv.classList.remove('d-none');
+                    
+                    // Re-enable button
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = originalText;
+                }
+            } catch (error) {
+                // Handle network errors
+                console.error('Login error:', error);
+                errorMsg.textContent = error.message;
+                errorDiv.classList.remove('d-none');
+                
+                // Re-enable button
+                loginBtn.disabled = false;
+                loginBtn.textContent = originalText;
+            }
+        });
+
+        // ===== LOAD LANGUAGE ON PAGE LOAD =====
+        
+        window.addEventListener('load', function() {
+            loadLanguage();
+        });
+    </script>
+</body>
+</html>

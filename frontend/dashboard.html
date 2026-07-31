@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chicken Disease Detection - Dashboard</title>
+    
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Custom styles -->
+    <link href="style.css" rel="stylesheet">
+    
+    <!-- Translations -->
+    <script src="lang.js"></script>
+
+    <style>
+        .upload-zone {
+            border: 3px dashed #1a6b3c;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: #f8faf7;
+        }
+
+        .upload-zone:hover {
+            background-color: #e8f5f0;
+            border-color: #0d3d20;
+        }
+
+        .upload-zone.drag-over {
+            background-color: #d4edda;
+            border-color: #0d3d20;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #1a6b3c;
+            margin-bottom: 10px;
+        }
+
+        .image-preview-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .file-info {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #1a6b3c;
+            border-radius: 4px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 25px 15px;
+            border-radius: 8px;
+            background: white;
+            border: 1px solid #e9ecef;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #1a6b3c;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            margin-top: 10px;
+            font-size: 0.95rem;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            color: #1a6b3c;
+            margin-bottom: 10px;
+        }
+
+        .farmer-tip {
+            border-left: 5px solid #f39c12;
+            padding: 15px;
+            background-color: #fffbf0;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .farmer-tip-icon {
+            color: #f39c12;
+            font-size: 1.3rem;
+            margin-right: 10px;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-box {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #1a6b3c;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* History table */
+        .history-section {
+            margin-top: 40px;
+        }
+
+        .badge-crd {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .badge-fowlpox {
+            background-color: #e67e22;
+            color: white;
+        }
+
+        .badge-healthy {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .history-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-box">
+            <div class="loading-spinner"></div>
+            <h5 style="color: #1a6b3c;">Analyzing Image...</h5>
+            <p class="text-muted mb-0">AI is detecting diseases</p>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg" style="background-color: #1a6b3c;">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center" 
+               href="dashboard.html" 
+               style="color: white; font-weight: bold;">
+                <i class="fas fa-feather me-2" style="font-size: 1.5rem;"></i>
+                <span data-lang-key="app_name">Chicken Disease Detection</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon" 
+                      style="background-image: url('data:image/svg+xml,%3csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 30 30%22%3e%3cpath stroke=%22white%22 stroke-linecap=%22round%22 stroke-miterlimit=%2210%22 stroke-width=%222%22 d=%22M4 7h22M4 15h22M4 23h22%22/%3e%3c/svg%3e');"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-end" 
+                 id="navbarContent">
+                <!-- Language Switcher -->
+                <div class="btn-group me-3" role="group">
+                    <button class="btn btn-sm btn-outline-light" 
+                            onclick="switchLanguage('en')">EN</button>
+                    <button class="btn btn-sm btn-outline-light" 
+                            onclick="switchLanguage('rw')">RW</button>
+                    <button class="btn btn-sm btn-outline-light" 
+                            onclick="switchLanguage('fr')">FR</button>
+                </div>
+
+                <!-- User Info -->
+                <div class="d-flex align-items-center">
+                    <a class="btn btn-sm btn-warning me-2 d-none"
+                       id="adminPanelBtn"
+                       href="admin.html">
+                        <i class="fas fa-shield-alt me-1"></i>
+                        Admin Panel
+                    </a>
+                    <span class="badge bg-light text-dark me-3">
+                        <i class="fas fa-user-circle me-2"></i>
+                        <span id="userDisplay"></span>
+                    </span>
+                    <button class="btn btn-sm btn-outline-light" 
+                            id="authActionBtn" 
+                            onclick="logout()" 
+                            data-lang-key="logout_btn">
+                        <i class="fas fa-sign-out-alt me-1"></i>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid px-4 py-5">
+
+        <!-- Page Title -->
+        <h1 class="mb-4 fw-bold" data-lang-key="dashboard_title">
+            Chicken Disease Detection System
+        </h1>
+
+        <!-- Stats Row -->
+        <div class="row mb-5">
+            <!-- Total Scans -->
+            <div class="col-md-4 mb-3">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="stat-number" id="statTotal">0</div>
+                    <div class="stat-label" data-lang-key="scans_done">
+                        Total Scans
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diseases Found -->
+            <div class="col-md-4 mb-3">
+                <div class="stat-card">
+                    <div class="stat-icon" style="color: #c0392b;">
+                        <i class="fas fa-virus"></i>
+                    </div>
+                    <div class="stat-number" 
+                         id="statDiseases" 
+                         style="color: #c0392b;">0</div>
+                    <div class="stat-label" data-lang-key="diseases_found">
+                        Diseases Found
+                    </div>
+                </div>
+            </div>
+
+            <!-- Healthy Results -->
+            <div class="col-md-4 mb-3">
+                <div class="stat-card">
+                    <div class="stat-icon" style="color: #27ae60;">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="stat-number" 
+                         id="statHealthy" 
+                         style="color: #27ae60;">0</div>
+                    <div class="stat-label" data-lang-key="healthy_results">
+                        Healthy Results
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body p-4">
+
+                        <!-- Upload Zone -->
+                        <div class="upload-zone" 
+                             id="uploadZone" 
+                             onclick="document.getElementById('fileInput').click();">
+                            <i class="fas fa-camera upload-icon"></i>
+                            <h5 class="mb-2" data-lang-key="upload_label">
+                                Upload Chicken Image
+                            </h5>
+                            <p class="text-muted" 
+                               data-lang-key="upload_instructions">
+                                Click to select or drag and drop
+                            </p>
+                            <input type="file" 
+                                   id="fileInput" 
+                                   accept="image/*" 
+                                   style="display: none;">
+                        </div>
+
+                        <!-- Image Preview -->
+                        <div class="image-preview-container" 
+                             id="previewContainer">
+                            <img id="preview" 
+                                 class="image-preview" 
+                                 alt="Preview">
+
+                            <div class="file-info">
+                                <strong>
+                                    <i class="fas fa-file me-2"></i>
+                                    <span data-lang-key="filename">
+                                        Filename
+                                    </span>:
+                                </strong>
+                                <span id="fileName"></span>
+                                <br>
+                                <strong>
+                                    <i class="fas fa-database me-2"></i>
+                                    <span data-lang-key="file_size">
+                                        File Size
+                                    </span>:
+                                </strong>
+                                <span id="fileSize"></span>
+                            </div>
+
+                            <!-- Error Alert -->
+                            <div class="alert alert-danger mt-3 d-none" 
+                                 id="errorAlert">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                <span id="errorMessage"></span>
+                            </div>
+
+                            <button class="btn btn-lg w-100 mt-4"
+                                    id="detectBtn"
+                                    style="background-color: #1a6b3c; 
+                                           color: white; 
+                                           font-weight: bold;"
+                                    onclick="detectDisease()"
+                                    data-lang-key="detect_btn">
+                                <i class="fas fa-search me-2"></i>
+                                Detect Disease
+                            </button>
+
+                            <!-- Reset button -->
+                            <button class="btn btn-outline-secondary w-100 mt-2"
+                                    onclick="resetUpload()">
+                                <i class="fas fa-redo me-2"></i>
+                                Upload Different Image
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Farmer Tip -->
+                <div class="farmer-tip">
+                    <div class="d-flex">
+                        <i class="fas fa-lightbulb farmer-tip-icon"></i>
+                        <div>
+                            <h6 class="mb-2" data-lang-key="farmer_tip_title">
+                                Farmer's Tip
+                            </h6>
+                            <p class="mb-0 small" data-lang-key="farmer_tip">
+                                Take a clear close-up photo in good lighting
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Disease Guide -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">
+                            <i class="fas fa-book-medical me-2 text-success"></i>
+                            Disease Guide
+                        </h6>
+
+                        <div class="d-flex align-items-start mb-3">
+                            <span class="badge badge-crd me-2 mt-1">CRD</span>
+                            <small class="text-muted">
+                                Nasal discharge, coughing, swollen face
+                            </small>
+                        </div>
+
+                        <div class="d-flex align-items-start mb-3">
+                            <span class="badge badge-fowlpox me-2 mt-1">
+                                Fowl Pox
+                            </span>
+                            <small class="text-muted">
+                                Wart-like lesions on comb and face
+                            </small>
+                        </div>
+
+                        <div class="d-flex align-items-start">
+                            <span class="badge badge-healthy me-2 mt-1">
+                                Healthy
+                            </span>
+                            <small class="text-muted">
+                                No visible disease symptoms
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detection History Section -->
+        <div class="history-section">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="fw-bold mb-0">
+                    <i class="fas fa-history me-2 text-success"></i>
+                    Recent Detections
+                </h4>
+                <button class="btn btn-sm btn-outline-success" 
+                        onclick="loadHistory()">
+                    <i class="fas fa-sync me-1"></i>
+                    Refresh
+                </button>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead style="background-color: #f8f9fa;">
+                                <tr>
+                                    <th class="px-4 py-3">Image</th>
+                                    <th class="py-3">User</th>
+                                    <th class="py-3">Result</th>
+                                    <th class="py-3">Confidence</th>
+                                    <th class="py-3">Date & Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                                <tr>
+                                    <td colspan="5" 
+                                        class="text-center py-4 text-muted">
+                                        <i class="fas fa-spinner fa-spin me-2"></i>
+                                        Loading history...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Main JS -->
+    <script src="main.js"></script>
+
+    <script>
+        // ================================================
+        // PAGE LOAD
+        // ================================================
+        window.addEventListener('load', function () {
+            loadLanguage();
+            const username = localStorage.getItem('loggedInUser');
+            const isAdmin = localStorage.getItem('isAdmin') === 'true' ||
+                (username && username.toLowerCase() === 'admin');
+
+            if (isAdmin) {
+                window.location.href = 'admin.html';
+                return;
+            }
+
+            document.getElementById('userDisplay').textContent = 
+                username || 'Guest';
+
+            const authActionBtn = document.getElementById('authActionBtn');
+            if (!username) {
+                authActionBtn.innerHTML = 
+                    '<i class="fas fa-sign-in-alt me-1"></i> Login';
+                authActionBtn.onclick = function () {
+                    window.location.href = 'login.html';
+                };
+            }
+
+            // Load real data
+            loadStatistics();
+            loadHistory();
+        });
+
+        // ================================================
+        // FILE UPLOAD HANDLING
+        // ================================================
+        const fileInput = document.getElementById('fileInput');
+        const uploadZone = document.getElementById('uploadZone');
+        const previewContainer = document.getElementById('previewContainer');
+
+        fileInput.addEventListener('change', handleFileSelect);
+
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('drag-over');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('drag-over');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('drag-over');
+            fileInput.files = e.dataTransfer.files;
+            handleFileSelect();
+        });
+
+        function handleFileSelect() {
+            const file = fileInput.files[0];
+            if (!file || !file.type.startsWith('image/')) {
+                showError('Please select a valid image file');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('preview').src = e.target.result;
+                localStorage.setItem('uploadedImage', e.target.result);
+                previewContainer.style.display = 'block';
+                uploadZone.style.display = 'none';
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileSize').textContent = 
+                    formatFileSize(file.size);
+                hideError();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetUpload() {
+            fileInput.value = '';
+            previewContainer.style.display = 'none';
+            uploadZone.style.display = 'block';
+            localStorage.removeItem('uploadedImage');
+            hideError();
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 
+                   + ' ' + sizes[i];
+        }
+
+        // ================================================
+        // AI DISEASE DETECTION
+        // ================================================
+        async function detectDisease() {
+            const file = fileInput.files[0];
+            const username = localStorage.getItem('loggedInUser') || 'guest';
+
+            if (!file) {
+                showError('Please upload an image first');
+                return;
+            }
+
+            // Show loading overlay
+            document.getElementById('loadingOverlay').classList.add('show');
+            document.getElementById('detectBtn').disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('username', username);
+
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Save full result to localStorage
+                    localStorage.setItem('detectionResult', JSON.stringify({
+                        disease: result.predicted_class,
+                        confidence: result.confidence,
+                        allConfidences: result.probabilities,
+                        disease_info: result.disease_info,
+                        image_name: result.image_name
+                    }));
+
+                    // Go to result page
+                    window.location.href = 'result.html';
+
+                } else {
+                    showError('Detection failed: ' + result.message);
+                    document.getElementById('detectBtn').disabled = false;
+                }
+
+            } catch (error) {
+                showError('Cannot connect to server. Please try again.');
+                console.error('Prediction error:', error);
+                document.getElementById('detectBtn').disabled = false;
+            } finally {
+                document.getElementById('loadingOverlay')
+                    .classList.remove('show');
+            }
+        }
+
+        // ================================================
+        // LOAD REAL STATISTICS FROM DATABASE
+        // ================================================
+        async function loadStatistics() {
+            try {
+                const response = await fetch('/api/statistics');
+                const data = await response.json();
+
+                if (data.success) {
+                    const stats = data.statistics;
+                    const diseases = (stats.crd || 0) + 
+                                     (stats.fowlpox || 0);
+                    document.getElementById('statTotal').textContent = 
+                        data.total;
+                    document.getElementById('statDiseases').textContent = 
+                        diseases;
+                    document.getElementById('statHealthy').textContent = 
+                        stats.healthy || 0;
+                }
+            } catch (error) {
+                console.error('Failed to load statistics:', error);
+            }
+        }
+
+        // ================================================
+        // LOAD DETECTION HISTORY FROM DATABASE
+        // ================================================
+        async function loadHistory() {
+            const tbody = document.getElementById('historyTableBody');
+
+            try {
+                const username = localStorage.getItem('loggedInUser');
+                const url = username
+                    ? `/api/history?username=${username}`
+                    : '/api/history';
+
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.success && data.detections.length > 0) {
+                    tbody.innerHTML = data.detections
+                        .slice(0, 10) // Show last 10
+                        .map(d => `
+                        <tr>
+                            <td class="px-4 py-3">
+                                <img src="/uploads/${d.image_name}" 
+                                     class="history-image"
+                                     onerror="this.src='https://via.placeholder.com/50x50?text=IMG'"
+                                     alt="chicken">
+                            </td>
+                            <td class="py-3">
+                                <i class="fas fa-user me-1 text-muted"></i>
+                                ${d.username}
+                            </td>
+                            <td class="py-3">
+                                <span class="badge badge-${d.predicted_class} px-3 py-2">
+                                    ${d.predicted_class.toUpperCase()}
+                                </span>
+                            </td>
+                            <td class="py-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="progress me-2" 
+                                         style="width: 80px; height: 8px;">
+                                        <div class="progress-bar bg-success" 
+                                             style="width: ${d.confidence}%">
+                                        </div>
+                                    </div>
+                                    <small>${d.confidence}%</small>
+                                </div>
+                            </td>
+                            <td class="py-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    ${formatDate(d.detected_at)}
+                                </small>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" 
+                                class="text-center py-4 text-muted">
+                                <i class="fas fa-inbox me-2"></i>
+                                No detections yet. Upload an image to start!
+                            </td>
+                        </tr>`;
+                }
+            } catch (error) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" 
+                            class="text-center py-4 text-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            Failed to load history
+                        </td>
+                    </tr>`;
+            }
+        }
+
+        // ================================================
+        // HELPER FUNCTIONS
+        // ================================================
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString() + ' ' + 
+                   date.toLocaleTimeString([], {
+                       hour: '2-digit', 
+                       minute: '2-digit'
+                   });
+        }
+
+        function showError(message) {
+            const alert = document.getElementById('errorAlert');
+            document.getElementById('errorMessage').textContent = message;
+            alert.classList.remove('d-none');
+        }
+
+        function hideError() {
+            document.getElementById('errorAlert').classList.add('d-none');
+        }
+
+        function logout() {
+            localStorage.removeItem('loggedInUser');
+            localStorage.removeItem('isAdmin');
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('uploadedImage');
+            localStorage.removeItem('detectionResult');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

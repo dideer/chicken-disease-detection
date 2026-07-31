@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Detections</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(180deg, #f7fbf8 0%, #eef5f1 100%); color: #1d2c24; min-height: 100vh; }
+        .admin-topbar { background: linear-gradient(120deg, #102d20 0%, #1e5a38 100%); box-shadow: 0 18px 40px rgba(18, 53, 36, 0.18); }
+        .nav-pill { border-radius: 999px; }
+        .dashboard-card { border: 0; border-radius: 24px; box-shadow: 0 16px 36px rgba(22, 55, 38, 0.08); }
+        .toolbar-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+        .toolbar-grid .form-control, .toolbar-grid .form-select { border-radius: 14px; min-height: 46px; }
+        .table thead th { background: #f5f8f6; color: #456154; font-size: 0.78rem; letter-spacing: 0.05em; text-transform: uppercase; }
+        div.dataTables_wrapper div.dataTables_filter,
+        div.dataTables_wrapper div.dataTables_length {
+            margin-bottom: 1rem;
+        }
+        div.dataTables_wrapper div.dataTables_filter input,
+        div.dataTables_wrapper div.dataTables_length select {
+            border-radius: 12px;
+            border: 1px solid #d7e4db;
+        }
+        .dataTables_wrapper .pagination .page-link {
+            border-radius: 999px !important;
+            margin: 0 2px;
+        }
+        .thumb { width: 58px; height: 58px; border-radius: 16px; object-fit: cover; border: 2px solid rgba(18, 53, 36, 0.08); }
+        .pill-badge { border-radius: 999px; padding: 0.45rem 0.8rem; font-weight: 700; }
+        .result-crd { background: #fde9e7; color: #a1262a; }
+        .result-fowlpox { background: #fff0d8; color: #9f6513; }
+        .result-healthy { background: #e2f5e8; color: #1d7b46; }
+        .result-chicken { background: #e7f0fb; color: #295f91; }
+        .result-no_chicken { background: #ececec; color: #505050; }
+        .empty-state { padding: 48px 20px; text-align: center; color: #6d7f75; }
+        .modal-content { border: 0; border-radius: 24px; overflow: hidden; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg admin-topbar">
+        <div class="container-fluid px-4 py-2">
+            <a class="navbar-brand fw-bold text-white" href="admin.html">
+                <i class="fas fa-user-shield me-2"></i>
+                Poultry Disease Admin
+            </a>
+            <div class="d-flex align-items-center ms-auto gap-2">
+                <a class="btn btn-sm btn-outline-light nav-pill" href="admin.html">Overview</a>
+                <a class="btn btn-sm btn-outline-light nav-pill" href="admin-users.html">Users</a>
+                <a class="btn btn-sm btn-light nav-pill" href="admin-detections.html">Detections</a>
+                <span class="badge bg-light text-dark px-3 py-2">
+                    <i class="fas fa-user-circle me-2"></i>
+                    <span id="adminName">Admin</span>
+                </span>
+                <button class="btn btn-sm btn-warning text-dark nav-pill" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-1"></i>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container-fluid px-4 py-4">
+        <section class="card dashboard-card">
+            <div class="card-body p-4">
+                <div class="mb-4">
+                    <h1 class="h3 fw-bold mb-1">Detection History</h1>
+                    <p class="text-muted mb-0">Detection records have their own page with filtering and image preview.</p>
+                </div>
+
+                <div class="toolbar-grid mb-4">
+                    <input id="detectionSearch" class="form-control" type="search" placeholder="Search by user or result">
+                    <select id="resultFilter" class="form-select">
+                        <option value="">All Results</option>
+                        <option value="crd">CRD</option>
+                        <option value="fowlpox">Fowl Pox</option>
+                        <option value="healthy">Healthy</option>
+                        <option value="chicken">Chicken</option>
+                        <option value="no_chicken">No Chicken</option>
+                    </select>
+                    <input id="dateFromFilter" class="form-control" type="date">
+                    <input id="dateToFilter" class="form-control" type="date">
+                    <button class="btn btn-outline-secondary rounded-pill" onclick="loadDetections()">
+                        <i class="fas fa-filter me-2"></i>
+                        Apply Filters
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table align-middle" id="detectionsDataTable">
+                        <thead>
+                            <tr>
+                                <th>Detection ID</th>
+                                <th>Image</th>
+                                <th>Result</th>
+                                <th>Confidence</th>
+                                <th>Date & Time</th>
+                                <th>Uploaded By</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detectionsTableBody">
+                            <tr><td colspan="7" class="empty-state">Loading detection history...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 p-4">
+                    <h3 class="h5 fw-bold mb-0">Detection Image</h3>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 pt-0 text-center">
+                    <img id="fullImagePreview" class="img-fluid rounded-4" alt="Detection preview">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+    <script src="main.js"></script>
+    <script>
+        let imageModal;
+        let detectionsTable;
+
+        async function ensureAdminSession() {
+            if (!localStorage.getItem('authToken')) {
+                window.location.href = 'login.html';
+                return null;
+            }
+            let me;
+            try {
+                me = await apiFetch('/api/me');
+            } catch (error) {
+                logout();
+                return null;
+            }
+            if (!me.success || !me.user || !me.user.is_admin) {
+                logout();
+                return null;
+            }
+            localStorage.setItem('loggedInUser', me.user.username);
+            localStorage.setItem('currentUser', JSON.stringify(me.user));
+            localStorage.setItem('isAdmin', 'true');
+            document.getElementById('adminName').textContent = me.user.username;
+            return me.user;
+        }
+
+        async function loadDetections() {
+            const params = new URLSearchParams();
+            const search = document.getElementById('detectionSearch').value.trim();
+            const result = document.getElementById('resultFilter').value;
+            const dateFrom = document.getElementById('dateFromFilter').value;
+            const dateTo = document.getElementById('dateToFilter').value;
+            if (search) params.set('search', search);
+            if (result) params.set('result', result);
+            if (dateFrom) params.set('date_from', dateFrom);
+            if (dateTo) params.set('date_to', dateTo);
+
+            const tbody = document.getElementById('detectionsTableBody');
+            tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Loading detection history...</td></tr>';
+
+            const response = await apiFetch(`/api/admin/detections?${params.toString()}`);
+            if (!response.success || !response.detections.length) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No detections match the current filters.</td></tr>';
+                refreshDetectionsDataTable();
+                return;
+            }
+
+            tbody.innerHTML = response.detections.map(detection => `
+                <tr>
+                    <td class="fw-semibold">#${detection.id}</td>
+                    <td><img src="${escapeHtml(detection.image_url)}" class="thumb" alt="Detection image" onerror="this.src='https://via.placeholder.com/58x58?text=IMG'"></td>
+                    <td><span class="pill-badge ${resultClass(detection.predicted_class)}">${formatResult(detection.predicted_class)}</span></td>
+                    <td>${Number(detection.confidence || 0).toFixed(2)}%</td>
+                    <td>${formatDateTime(detection.detected_at)}</td>
+                    <td><div class="fw-semibold">${escapeHtml(detection.username || 'Unknown')}</div><div class="small text-muted">${escapeHtml(detection.email || '')}</div></td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-outline-secondary rounded-pill me-1" onclick="viewImage('${escapeJs(detection.image_url)}')"><i class="fas fa-image"></i></button>
+                        <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="deleteDetection(${detection.id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+            refreshDetectionsDataTable();
+        }
+
+        function refreshDetectionsDataTable() {
+            if (detectionsTable) {
+                detectionsTable.destroy();
+            }
+
+            detectionsTable = $('#detectionsDataTable').DataTable({
+                responsive: true,
+                pageLength: 5,
+                lengthMenu: [5, 10, 25, 50],
+                order: [[0, 'desc']],
+                columnDefs: [
+                    { orderable: false, targets: [1, 6] }
+                ]
+            });
+        }
+
+        function viewImage(imageUrl) {
+            document.getElementById('fullImagePreview').src = imageUrl;
+            imageModal.show();
+        }
+
+        async function deleteDetection(detectionId) {
+            if (!confirm('Delete this detection record?')) return;
+            const response = await apiFetch(`/api/admin/detections/${detectionId}`, { method: 'DELETE' });
+            if (!response.success) {
+                alert(response.message || 'Failed to delete detection record.');
+                return;
+            }
+            await loadDetections();
+        }
+
+        function formatDateTime(value) {
+            const date = new Date(value);
+            return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        }
+
+        function formatResult(value) {
+            return capitalize((value || '').replace('_', ' '));
+        }
+
+        function resultClass(value) {
+            const key = (value || '').toLowerCase();
+            return `result-${key}`;
+        }
+
+        function capitalize(value) {
+            if (!value) return '';
+            return value.charAt(0).toUpperCase() + value.slice(1);
+        }
+
+        function escapeHtml(value) {
+            return String(value || '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+        }
+
+        function escapeJs(value) {
+            return String(value || '').replaceAll('\\', '\\\\').replaceAll("'", "\\'");
+        }
+
+        window.addEventListener('load', async function () {
+            imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+            const user = await ensureAdminSession();
+            if (!user) return;
+            await loadDetections();
+        });
+    </script>
+</body>
+</html>
