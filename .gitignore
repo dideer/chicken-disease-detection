@@ -1,7 +1,6 @@
 Dataset/
-best_model.keras
-best_model.tflite
 chicken_con_final.tflite
+filter_cnn.tflite
 yolov5m.pt
 __pycache__/
 *.pyc
