@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poultry Disease Admin</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- DataTables -->
+    <link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --brand-900: #0e2b1d;
+            --brand-800: #123524;
+            --brand-700: #1a4d31;
+            --brand-600: #1f6f43;
+            --brand-500: #2f8d58;
+            --brand-100: #e2f5e8;
+            --brand-50:  #f4faf6;
+            --ink:       #1d2c24;
+            --muted:     #6d7f75;
+            --line:      #e3ece6;
+            --sidebar-w: 264px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background: #f2f6f3;
+            color: var(--ink);
+            min-height: 100vh;
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        }
+
+        /* ============ SIDEBAR ============ */
+        .sidebar {
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            width: var(--sidebar-w);
+            background: linear-gradient(180deg, var(--brand-900) 0%, var(--brand-700) 100%);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            z-index: 1040;
+            transition: transform .25s ease;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 22px 22px 18px;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+
+        .sidebar-brand .brand-icon {
+            width: 42px; height: 42px;
+            border-radius: 12px;
+            background: rgba(255,255,255,.12);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .sidebar-brand .brand-name {
+            font-weight: 800;
+            font-size: 1rem;
+            line-height: 1.2;
+        }
+
+        .sidebar-brand .brand-sub {
+            font-size: .72rem;
+            opacity: .65;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .sidebar-nav {
+            padding: 18px 14px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .sidebar-nav .nav-label {
+            font-size: .68rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            opacity: .5;
+            padding: 0 12px;
+            margin-bottom: 8px;
+        }
+
+        .side-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 11px 14px;
+            margin-bottom: 4px;
+            border: 0;
+            border-radius: 12px;
+            background: transparent;
+            color: rgba(255,255,255,.78);
+            font-weight: 600;
+            font-size: .92rem;
+            text-align: left;
+            transition: background .15s, color .15s;
+        }
+
+        .side-link i { font-size: 1.05rem; width: 22px; text-align: center; }
+
+        .side-link:hover { background: rgba(255,255,255,.08); color: #fff; }
+
+        .side-link.active {
+            background: #fff;
+            color: var(--brand-800);
+            box-shadow: 0 8px 20px rgba(0,0,0,.18);
+        }
+
+        .sidebar-footer {
+            padding: 16px 18px;
+            border-top: 1px solid rgba(255,255,255,.08);
+        }
+
+        .admin-chip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .admin-chip .avatar {
+            width: 38px; height: 38px;
+            border-radius: 12px;
+            background: rgba(255,255,255,.15);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+        }
+
+        .admin-chip .role { font-size: .72rem; opacity: .6; }
+
+        /* ============ MAIN ============ */
+        .main-area {
+            margin-left: var(--sidebar-w);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+        }
+
+        .topbar .page-title { font-weight: 800; font-size: 1.15rem; margin: 0; }
+        .topbar .page-sub { font-size: .82rem; color: var(--muted); }
+
+        .content { padding: 28px; }
+
+        /* ============ CARDS / METRICS ============ */
+        .panel {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            box-shadow: 0 10px 28px rgba(22, 55, 38, 0.05);
+        }
+
+        .metric-card {
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: #fff;
+            padding: 22px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: transform .15s, box-shadow .15s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 30px rgba(22, 55, 38, 0.10);
+        }
+
+        .metric-icon {
+            width: 52px; height: 52px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .mi-users      { background: var(--brand-100); color: var(--brand-600); }
+        .mi-detections { background: #e7f0fb; color: #295f91; }
+        .mi-chickens   { background: #fff0d8; color: #9f6513; }
+        .mi-diseases   { background: #fde9e7; color: #a1262a; }
+
+        .metric-value { font-size: 1.9rem; font-weight: 800; line-height: 1; }
+        .metric-label { font-size: .8rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-top: 6px; }
+
+        /* ============ TOOLBARS / TABLES ============ */
+        .toolbar-grid {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        }
+
+        .toolbar-grid .form-control,
+        .toolbar-grid .form-select {
+            border-radius: 12px;
+            min-height: 44px;
+            border-color: var(--line);
+        }
+
+        .toolbar-grid .form-control:focus,
+        .toolbar-grid .form-select:focus {
+            border-color: var(--brand-500);
+            box-shadow: 0 0 0 .2rem rgba(47, 141, 88, .15);
+        }
+
+        .table thead th {
+            background: var(--brand-50);
+            color: #456154;
+            font-size: .74rem;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .table td { vertical-align: middle; }
+
+        div.dataTables_wrapper div.dataTables_filter,
+        div.dataTables_wrapper div.dataTables_length { margin-bottom: 1rem; }
+
+        div.dataTables_wrapper div.dataTables_filter input,
+        div.dataTables_wrapper div.dataTables_length select {
+            border-radius: 10px;
+            border: 1px solid var(--line);
+        }
+
+        .dataTables_wrapper .pagination .page-link {
+            border-radius: 999px !important;
+            margin: 0 2px;
+            color: var(--brand-700);
+        }
+
+        .dataTables_wrapper .pagination .page-item.active .page-link {
+            background: var(--brand-600);
+            border-color: var(--brand-600);
+            color: #fff;
+        }
+
+        /* ============ BADGES / MISC ============ */
+        .pill-badge { border-radius: 999px; padding: .42rem .8rem; font-weight: 700; font-size: .78rem; }
+        .result-crd        { background: #fde9e7; color: #a1262a; }
+        .result-fowlpox    { background: #fff0d8; color: #9f6513; }
+        .result-healthy    { background: var(--brand-100); color: #1d7b46; }
+        .result-chicken    { background: #e7f0fb; color: #295f91; }
+        .result-no_chicken { background: #ececec; color: #505050; }
+
+        .thumb {
+            width: 54px; height: 54px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid rgba(18, 53, 36, 0.08);
+        }
+
+        .user-chip { display: inline-flex; align-items: center; gap: 10px; }
+        .user-avatar {
+            width: 40px; height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #d5eadc, #f2f7f3);
+            color: var(--brand-600);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+        }
+
+        .empty-state { padding: 48px 20px; text-align: center; color: var(--muted); }
+
+        .btn-brand {
+            background: var(--brand-600);
+            border-color: var(--brand-600);
+            color: #fff;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+        .btn-brand:hover { background: var(--brand-700); border-color: var(--brand-700); color: #fff; }
+
+        .modal-content { border: 0; border-radius: 20px; overflow: hidden; }
+        .modal-header { background: var(--brand-50); }
+
+        .section-view { display: none; }
+        .section-view.active { display: block; animation: fadeIn .2s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: none; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .section-view.active { animation: none; }
+            .metric-card, .metric-card:hover { transform: none; transition: none; }
+        }
+
+        /* ============ RESPONSIVE ============ */
+        .sidebar-toggle { display: none; }
+
+        @media (max-width: 991.98px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-area { margin-left: 0; }
+            .sidebar-toggle { display: inline-flex; }
+            .sidebar-backdrop {
+                display: none;
+                position: fixed; inset: 0;
+                background: rgba(0,0,0,.4);
+                z-index: 1035;
+            }
+            .sidebar-backdrop.show { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============ SIDEBAR ============ -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <span class="brand-icon"><i class="bi bi-shield-check"></i></span>
+            <div>
+                <div class="brand-name">Poultry Disease</div>
+                <div class="brand-sub">Admin Console</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-label">Menu</div>
+            <button class="side-link active" data-section="overview" onclick="showSection('overview')">
+                <i class="bi bi-grid-1x2"></i> Overview
+            </button>
+            <button class="side-link" data-section="users" onclick="showSection('users')">
+                <i class="bi bi-people"></i> Users
+            </button>
+            <button class="side-link" data-section="detections" onclick="showSection('detections')">
+                <i class="bi bi-clock-history"></i> Detections
+            </button>
+
+          -->
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="admin-chip">
+                <span class="avatar" id="adminAvatar">A</span>
+                <div>
+                    <div class="fw-semibold" id="adminName">Admin</div>
+                    <div class="role">Administrator</div>
+                </div>
+            </div>
+            <button class="btn btn-warning btn-sm w-100 rounded-pill text-dark fw-semibold" onclick="logout()">
+                <i class="bi bi-box-arrow-right me-1"></i> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- ============ MAIN AREA ============ -->
+    <div class="main-area">
+
+        <header class="topbar">
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-outline-secondary btn-sm sidebar-toggle rounded-3" onclick="openSidebar()">
+                    <i class="bi bi-list fs-5"></i>
+                </button>
+                <div>
+                    <h1 class="page-title" id="pageTitle">Overview</h1>
+                    <div class="page-sub" id="pageSub">Key metrics across the whole system</div>
+                </div>
+            </div>
+            <button class="btn btn-outline-secondary btn-sm rounded-pill" onclick="refreshCurrentSection()">
+                <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+            </button>
+        </header>
+
+        <main class="content">
+
+            <!-- ============ OVERVIEW SECTION ============ -->
+            <section class="section-view active" id="section-overview">
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6 col-xl-3">
+                        <div class="metric-card">
+                            <span class="metric-icon mi-users"><i class="bi bi-people-fill"></i></span>
+                            <div>
+                                <div class="metric-value" id="summaryUsers">0</div>
+                                <div class="metric-label">Total Users</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-3">
+                        <div class="metric-card">
+                            <span class="metric-icon mi-detections"><i class="bi bi-camera-fill"></i></span>
+                            <div>
+                                <div class="metric-value" id="summaryDetections">0</div>
+                                <div class="metric-label">Total Detections</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-3">
+                        <div class="metric-card">
+                            <span class="metric-icon mi-chickens"><i class="bi bi-egg-fill"></i></span>
+                            <div>
+                                <div class="metric-value" id="summaryChickens">0</div>
+                                <div class="metric-label">Chickens Detected</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-3">
+                        <div class="metric-card">
+                            <span class="metric-icon mi-diseases"><i class="bi bi-virus"></i></span>
+                            <div>
+                                <div class="metric-value" id="summaryDiseases">0</div>
+                                <div class="metric-label">Disease Cases</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="panel p-4 h-100">
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <span class="metric-icon mi-users"><i class="bi bi-person-gear"></i></span>
+                                <h2 class="h5 fw-bold mb-0">User Management</h2>
+                            </div>
+                            <p class="text-muted">Add, edit, activate, deactivate, search, and delete user accounts.</p>
+                            <button class="btn btn-brand px-4" onclick="showSection('users')">
+                                <i class="bi bi-people me-2"></i> Open Users
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="panel p-4 h-100">
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <span class="metric-icon mi-detections"><i class="bi bi-images"></i></span>
+                                <h2 class="h5 fw-bold mb-0">Detection History</h2>
+                            </div>
+                            <p class="text-muted">View thumbnails, filter by date or result, preview images, and delete records.</p>
+                            <button class="btn btn-outline-success rounded-pill px-4" onclick="showSection('detections')">
+                                <i class="bi bi-clock-history me-2"></i> Open Detections
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============ USERS SECTION ============ -->
+            <section class="section-view" id="section-users">
+                <div class="panel p-4">
+                    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+                        <div>
+                            <h2 class="h4 fw-bold mb-1">User Management</h2>
+                            <p class="text-muted mb-0">Manage administrator and standard user accounts.</p>
+                        </div>
+                        <button class="btn btn-brand px-4" data-bs-toggle="modal" data-bs-target="#userModal" onclick="openAddUserModal()">
+                            <i class="bi bi-person-plus me-2"></i> Add User
+                        </button>
+                    </div>
+
+                    <div class="toolbar-grid mb-4">
+                        <input id="userSearch" class="form-control" type="search" placeholder="Search by name or email">
+                        <select id="userRoleFilter" class="form-select">
+                            <option value="">All Roles</option>
+                            <option value="admin">Admin</option>
+                            <option value="user">User</option>
+                        </select>
+                        <select id="userStatusFilter" class="form-select">
+                            <option value="">All Statuses</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                        <button class="btn btn-outline-secondary rounded-pill" onclick="loadUsers()">
+                            <i class="bi bi-funnel me-2"></i> Apply Filters
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table align-middle" id="usersDataTable">
+                            <thead>
+                                <tr>
+                                    <th>User ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Created Date</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr><td colspan="7" class="empty-state">Loading users...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============ DETECTIONS SECTION ============ -->
+            <section class="section-view" id="section-detections">
+                <div class="panel p-4">
+                    <div class="mb-4">
+                        <h2 class="h4 fw-bold mb-1">Detection History</h2>
+                        <p class="text-muted mb-0">Filter detection records and preview uploaded images.</p>
+                    </div>
+
+                    <div class="toolbar-grid mb-4">
+                        <input id="detectionSearch" class="form-control" type="search" placeholder="Search by user or result">
+                        <select id="resultFilter" class="form-select">
+                            <option value="">All Results</option>
+                            <option value="crd">CRD</option>
+                            <option value="fowlpox">Fowl Pox</option>
+                            <option value="healthy">Healthy</option>
+                            <option value="chicken">Chicken</option>
+                            <option value="no_chicken">No Chicken</option>
+                        </select>
+                        <input id="dateFromFilter" class="form-control" type="date">
+                        <input id="dateToFilter" class="form-control" type="date">
+                        <button class="btn btn-outline-secondary rounded-pill" onclick="loadDetections()">
+                            <i class="bi bi-funnel me-2"></i> Apply Filters
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table align-middle" id="detectionsDataTable">
+                            <thead>
+                                <tr>
+                                    <th>Detection ID</th>
+                                    <th>Image</th>
+                                    <th>Result</th>
+                                    <th>Confidence</th>
+                                    <th>Date &amp; Time</th>
+                                    <th>Uploaded By</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detectionsTableBody">
+                                <tr><td colspan="7" class="empty-state">Loading detection history...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ============ USER MODAL ============ -->
+    <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 p-4">
+                    <div>
+                        <h3 class="h5 fw-bold mb-1" id="userModalTitle">Add User</h3>
+                        <p class="text-muted mb-0">Manage administrator and standard user accounts.</p>
+                    </div>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 pt-0">
+                    <form id="userForm">
+                        <input type="hidden" id="userIdField">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input id="userNameField" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input id="userEmailField" class="form-control" type="email" required>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Role</label>
+                                <select id="userRoleField" class="form-select" required>
+                                    <option value="user">User</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Status</label>
+                                <select id="userStatusField" class="form-select" required>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <label class="form-label">Password</label>
+                            <input id="userPasswordField" class="form-control" type="password" placeholder="Leave blank when editing to keep current password">
+                        </div>
+                        <div id="userFormAlert" class="alert alert-danger d-none mt-3 mb-0"></div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 px-4 pb-4">
+                    <button class="btn btn-outline-secondary rounded-pill px-4" type="button" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-brand px-4" type="button" onclick="submitUserForm()">Save User</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ IMAGE MODAL ============ -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 p-4">
+                    <h3 class="h5 fw-bold mb-0">Detection Image</h3>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 pt-0 text-center">
+                    <img id="fullImagePreview" class="img-fluid rounded-4" alt="Detection preview">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+    <script src="main.js"></script>
+
+    <script>
+        // ================================================
+        // STATE
+        // ================================================
+        let userModal;
+        let imageModal;
+        let usersTable;
+        let detectionsTable;
+        let currentSection = 'overview';
+        let loadedSections = { overview: false, users: false, detections: false };
+
+        const sectionMeta = {
+            overview:   { title: 'Overview',          sub: 'Key metrics across the whole system' },
+            users:      { title: 'User Management',   sub: 'Manage admins and standard users' },
+            detections: { title: 'Detection History', sub: 'Filter records and preview images' }
+        };
+
+        // ================================================
+        // SIDEBAR / NAVIGATION
+        // ================================================
+        function showSection(section) {
+            currentSection = section;
+
+            document.querySelectorAll('.section-view').forEach(el => el.classList.remove('active'));
+            document.getElementById(`section-${section}`).classList.add('active');
+
+            document.querySelectorAll('.side-link[data-section]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.section === section);
+            });
+
+            document.getElementById('pageTitle').textContent = sectionMeta[section].title;
+            document.getElementById('pageSub').textContent = sectionMeta[section].sub;
+
+            closeSidebar();
+
+            // Lazy-load each section the first time it is opened
+            if (!loadedSections[section]) {
+                loadedSections[section] = true;
+                if (section === 'users') loadUsers();
+                if (section === 'detections') loadDetections();
+            }
+        }
+
+        function refreshCurrentSection() {
+            if (currentSection === 'overview') loadSummary();
+            if (currentSection === 'users') loadUsers();
+            if (currentSection === 'detections') loadDetections();
+        }
+
+        function openSidebar() {
+            document.getElementById('sidebar').classList.add('open');
+            document.getElementById('sidebarBackdrop').classList.add('show');
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarBackdrop').classList.remove('show');
+        }
+
+        // ================================================
+        // SESSION
+        // ================================================
+        async function ensureAdminSession() {
+            if (!localStorage.getItem('authToken')) {
+                window.location.href = 'login.html';
+                return null;
+            }
+            let me;
+            try {
+                me = await apiFetch('/api/me');
+            } catch (error) {
+                logout();
+                return null;
+            }
+            if (!me.success || !me.user || !me.user.is_admin) {
+                logout();
+                return null;
+            }
+            localStorage.setItem('loggedInUser', me.user.username);
+            localStorage.setItem('currentUser', JSON.stringify(me.user));
+            localStorage.setItem('isAdmin', 'true');
+            document.getElementById('adminName').textContent = me.user.username;
+            document.getElementById('adminAvatar').textContent = getInitials(me.user.username);
+            return me.user;
+        }
+
+        // ================================================
+        // OVERVIEW
+        // ================================================
+        async function loadSummary() {
+            const response = await apiFetch('/api/admin/summary');
+            if (!response.success) return;
+            const summary = response.summary || {};
+            document.getElementById('summaryUsers').textContent = summary.total_users || 0;
+            document.getElementById('summaryDetections').textContent = summary.total_detections || 0;
+            document.getElementById('summaryChickens').textContent = summary.total_chickens_detected || 0;
+            document.getElementById('summaryDiseases').textContent = summary.total_disease_cases || 0;
+        }
+
+        // ================================================
+        // USERS
+        // ================================================
+        async function loadUsers() {
+            const params = new URLSearchParams();
+            const search = document.getElementById('userSearch').value.trim();
+            const role = document.getElementById('userRoleFilter').value;
+            const status = document.getElementById('userStatusFilter').value;
+            if (search) params.set('search', search);
+            if (role) params.set('role', role);
+            if (status) params.set('status', status);
+
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Loading users...</td></tr>';
+
+            const response = await apiFetch(`/api/admin/users?${params.toString()}`);
+            if (!response.success || !response.users.length) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No users match the current filters.</td></tr>';
+                refreshUsersDataTable();
+                return;
+            }
+
+            tbody.innerHTML = response.users.map(user => `
+                <tr>
+                    <td class="fw-semibold">#${user.id}</td>
+                    <td>
+                        <div class="user-chip">
+                            <span class="user-avatar">${getInitials(user.username)}</span>
+                            <div>
+                                <div class="fw-semibold">${escapeHtml(user.username)}</div>
+                                <div class="small text-muted">${user.detection_count} detections</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${escapeHtml(user.email)}</td>
+                    <td><span class="badge ${user.role === 'admin' ? 'bg-warning text-dark' : 'bg-light text-dark'} pill-badge">${capitalize(user.role)}</span></td>
+                    <td><span class="badge ${user.status === 'active' ? 'bg-success-subtle text-success-emphasis' : 'bg-secondary-subtle text-secondary-emphasis'} pill-badge">${capitalize(user.status)}</span></td>
+                    <td>${formatDate(user.created_at)}</td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-outline-primary rounded-pill me-1" title="Edit" onclick='openEditUserModal(${JSON.stringify(user).replace(/'/g, "&apos;")})'><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-${user.status === 'active' ? 'warning' : 'success'} rounded-pill me-1" title="Toggle status" onclick="toggleUserStatus(${user.id}, '${user.status}')"><i class="bi bi-power"></i></button>
+                        <button class="btn btn-sm btn-outline-danger rounded-pill" title="Delete" onclick="deleteUser(${user.id}, '${escapeJs(user.username)}')"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+            refreshUsersDataTable();
+        }
+
+        function refreshUsersDataTable() {
+            if (usersTable) {
+                usersTable.destroy();
+            }
+            usersTable = $('#usersDataTable').DataTable({
+                responsive: true,
+                pageLength: 5,
+                lengthMenu: [5, 10, 25, 50],
+                order: [[0, 'desc']],
+                columnDefs: [
+                    { orderable: false, targets: 6 }
+                ]
+            });
+        }
+
+        function openAddUserModal() {
+            document.getElementById('userModalTitle').textContent = 'Add User';
+            document.getElementById('userForm').reset();
+            document.getElementById('userIdField').value = '';
+            document.getElementById('userPasswordField').required = true;
+            hideUserAlert();
+        }
+
+        function openEditUserModal(user) {
+            const parsed = typeof user === 'string' ? JSON.parse(user) : user;
+            document.getElementById('userModalTitle').textContent = 'Edit User';
+            document.getElementById('userIdField').value = parsed.id;
+            document.getElementById('userNameField').value = parsed.username;
+            document.getElementById('userEmailField').value = parsed.email;
+            document.getElementById('userRoleField').value = parsed.role;
+            document.getElementById('userStatusField').value = parsed.status;
+            document.getElementById('userPasswordField').value = '';
+            document.getElementById('userPasswordField').required = false;
+            hideUserAlert();
+            userModal.show();
+        }
+
+        async function submitUserForm() {
+            const id = document.getElementById('userIdField').value;
+            const payload = {
+                username: document.getElementById('userNameField').value.trim(),
+                email: document.getElementById('userEmailField').value.trim(),
+                role: document.getElementById('userRoleField').value,
+                status: document.getElementById('userStatusField').value,
+                password: document.getElementById('userPasswordField').value
+            };
+
+            if (!payload.username || !payload.email || (!id && !payload.password)) {
+                showUserAlert('Please complete all required fields.');
+                return;
+            }
+
+            const response = await apiFetch(id ? `/api/admin/users/${id}` : '/api/admin/users', {
+                method: id ? 'PUT' : 'POST',
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.success) {
+                showUserAlert(response.message || 'Failed to save user.');
+                return;
+            }
+
+            userModal.hide();
+            await loadUsers();
+        }
+
+        async function toggleUserStatus(userId, currentStatus) {
+            const nextStatus = currentStatus === 'active' ? 'inactive' : 'active';
+            if (!confirm(`Set this user to ${nextStatus}?`)) return;
+            const response = await apiFetch(`/api/admin/users/${userId}/status`, {
+                method: 'PATCH',
+                body: JSON.stringify({ status: nextStatus })
+            });
+            if (!response.success) {
+                alert(response.message || 'Failed to update user status.');
+                return;
+            }
+            await loadUsers();
+        }
+
+        async function deleteUser(userId, username) {
+            if (!confirm(`Delete user "${username}"? This action cannot be undone.`)) return;
+            const response = await apiFetch(`/api/admin/users/${userId}`, { method: 'DELETE' });
+            if (!response.success) {
+                alert(response.message || 'Failed to delete user.');
+                return;
+            }
+            await loadUsers();
+        }
+
+        function showUserAlert(message) {
+            const alertBox = document.getElementById('userFormAlert');
+            alertBox.textContent = message;
+            alertBox.classList.remove('d-none');
+        }
+
+        function hideUserAlert() {
+            const alertBox = document.getElementById('userFormAlert');
+            alertBox.textContent = '';
+            alertBox.classList.add('d-none');
+        }
+
+        // ================================================
+        // DETECTIONS
+        // ================================================
+        async function loadDetections() {
+            const params = new URLSearchParams();
+            const search = document.getElementById('detectionSearch').value.trim();
+            const result = document.getElementById('resultFilter').value;
+            const dateFrom = document.getElementById('dateFromFilter').value;
+            const dateTo = document.getElementById('dateToFilter').value;
+            if (search) params.set('search', search);
+            if (result) params.set('result', result);
+            if (dateFrom) params.set('date_from', dateFrom);
+            if (dateTo) params.set('date_to', dateTo);
+
+            const tbody = document.getElementById('detectionsTableBody');
+            tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Loading detection history...</td></tr>';
+
+            const response = await apiFetch(`/api/admin/detections?${params.toString()}`);
+            if (!response.success || !response.detections.length) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No detections match the current filters.</td></tr>';
+                refreshDetectionsDataTable();
+                return;
+            }
+
+            tbody.innerHTML = response.detections.map(detection => `
+                <tr>
+                    <td class="fw-semibold">#${detection.id}</td>
+                    <td><img src="${escapeHtml(detection.image_url)}" class="thumb" alt="Detection image" onerror="this.src='https://via.placeholder.com/58x58?text=IMG'"></td>
+                    <td><span class="pill-badge ${resultClass(detection.predicted_class)}">${formatResult(detection.predicted_class)}</span></td>
+                    <td>${Number(detection.confidence || 0).toFixed(2)}%</td>
+                    <td>${formatDateTime(detection.detected_at)}</td>
+                    <td><div class="fw-semibold">${escapeHtml(detection.username || 'Unknown')}</div><div class="small text-muted">${escapeHtml(detection.email || '')}</div></td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-outline-secondary rounded-pill me-1" title="Preview image" onclick="viewImage('${escapeJs(detection.image_url)}')"><i class="bi bi-image"></i></button>
+                        <button class="btn btn-sm btn-outline-danger rounded-pill" title="Delete" onclick="deleteDetection(${detection.id})"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+            refreshDetectionsDataTable();
+        }
+
+        function refreshDetectionsDataTable() {
+            if (detectionsTable) {
+                detectionsTable.destroy();
+            }
+            detectionsTable = $('#detectionsDataTable').DataTable({
+                responsive: true,
+                pageLength: 5,
+                lengthMenu: [5, 10, 25, 50],
+                order: [[0, 'desc']],
+                columnDefs: [
+                    { orderable: false, targets: [1, 6] }
+                ]
+            });
+        }
+
+        function viewImage(imageUrl) {
+            document.getElementById('fullImagePreview').src = imageUrl;
+            imageModal.show();
+        }
+
+        async function deleteDetection(detectionId) {
+            if (!confirm('Delete this detection record?')) return;
+            const response = await apiFetch(`/api/admin/detections/${detectionId}`, { method: 'DELETE' });
+            if (!response.success) {
+                alert(response.message || 'Failed to delete detection record.');
+                return;
+            }
+            await loadDetections();
+        }
+
+        // ================================================
+        // HELPERS
+        // ================================================
+        function formatDate(value) {
+            return new Date(value).toLocaleDateString();
+        }
+
+        function formatDateTime(value) {
+            const date = new Date(value);
+            return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        }
+
+        function formatResult(value) {
+            return capitalize((value || '').replace('_', ' '));
+        }
+
+        function resultClass(value) {
+            const key = (value || '').toLowerCase();
+            return `result-${key}`;
+        }
+
+        function getInitials(name) {
+            return (name || 'A').split(' ').map(part => part[0]).join('').slice(0, 2).toUpperCase();
+        }
+
+        function capitalize(value) {
+            if (!value) return '';
+            return value.charAt(0).toUpperCase() + value.slice(1);
+        }
+
+        function escapeHtml(value) {
+            return String(value || '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+        }
+
+        function escapeJs(value) {
+            return String(value || '').replaceAll('\\', '\\\\').replaceAll("'", "\\'");
+        }
+
+        // ================================================
+        // PAGE LOAD
+        // ================================================
+        window.addEventListener('load', async function () {
+            userModal = new bootstrap.Modal(document.getElementById('userModal'));
+            imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+
+            const user = await ensureAdminSession();
+            if (!user) return;
+
+            loadedSections.overview = true;
+            await loadSummary();
+        });
+    </script>
+</body>
+</html>

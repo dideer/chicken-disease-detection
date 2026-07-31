@@ -169,7 +169,7 @@
                     // Redirect to dashboard after 1 second
                     setTimeout(() => {
                         window.location.href = response.user && response.user.is_admin
-                            ? 'admin.html'
+                            ? 'admins.html'
                             : 'dashboard.html';
                     }, 1000);
                 } else {
