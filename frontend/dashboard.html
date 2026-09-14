@@ -625,19 +625,17 @@
         // ================================================
         async function loadStatistics() {
             try {
-                const response = await fetch('/api/statistics');
+                const username = localStorage.getItem('loggedInUser') || 'guest';
+                const response = await fetch(
+                    `/api/statistics?username=${encodeURIComponent(username)}`);
                 const data = await response.json();
 
                 if (data.success) {
                     const stats = data.statistics;
-                    const diseases = (stats.crd || 0) + 
-                                     (stats.fowlpox || 0);
-                    document.getElementById('statTotal').textContent = 
-                        data.total;
-                    document.getElementById('statDiseases').textContent = 
-                        diseases;
-                    document.getElementById('statHealthy').textContent = 
-                        stats.healthy || 0;
+                    const diseases = (stats.crd || 0) + (stats.fowlpox || 0);
+                    document.getElementById('statTotal').textContent = data.total;
+                    document.getElementById('statDiseases').textContent = diseases;
+                    document.getElementById('statHealthy').textContent = stats.healthy || 0;
                 }
             } catch (error) {
                 console.error('Failed to load statistics:', error);
@@ -651,10 +649,8 @@
             const tbody = document.getElementById('historyTableBody');
 
             try {
-                const username = localStorage.getItem('loggedInUser');
-                const url = username
-                    ? `/api/history?username=${username}`
-                    : '/api/history';
+                const username = localStorage.getItem('loggedInUser') || 'guest';
+                const url = `/api/history?username=${encodeURIComponent(username)}`;
 
                 const response = await fetch(url);
                 const data = await response.json();

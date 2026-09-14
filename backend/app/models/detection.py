@@ -134,15 +134,24 @@ class Detection:
             conn.close()
 
     @staticmethod
-    def get_statistics():
+    def get_statistics(username=None):
         conn = get_db_connection()
         cur = conn.cursor()
         try:
-            cur.execute("""
-                SELECT LOWER(predicted_class) AS predicted_class, COUNT(*) AS total
-                FROM detections
-                GROUP BY LOWER(predicted_class);
-            """)
+            if username:
+                cur.execute("""
+                    SELECT LOWER(d.predicted_class) AS predicted_class, COUNT(*) AS total
+                    FROM detections d
+                    LEFT JOIN users u ON u.id = d.user_id
+                    WHERE COALESCE(u.username, d.username) = %s
+                    GROUP BY LOWER(d.predicted_class);
+                """, (username,))
+            else:
+                cur.execute("""
+                    SELECT LOWER(predicted_class) AS predicted_class, COUNT(*) AS total
+                    FROM detections
+                    GROUP BY LOWER(predicted_class);
+                """)
             rows = cur.fetchall()
             stats = {}
             for row in rows:

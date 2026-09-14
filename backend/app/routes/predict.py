@@ -226,10 +226,11 @@ def history():
         } for item in detections]
     }), 200
 
-
+ 
 @predict_bp.route('/api/statistics', methods=['GET'])
 def statistics():
-    stats = Detection.get_statistics()
+    username = request.args.get('username', None)
+    stats = Detection.get_statistics(username=username)
     total = sum(stats.values())
     return jsonify({
         'success': True,

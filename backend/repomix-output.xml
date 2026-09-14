@@ -1,0 +1,1825 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+app/
+  models/
+    detection.py
+    user.py
+  routes/
+    test_early_auth/
+      __init__.py
+      test_early_register.py
+    admin.py
+    auth.py
+    predict.py
+  utils/
+    auth.py
+    helpers.py
+  __init__.py
+frontend/
+  uploads/
+    0021f1e5f4c241e18a54dce8d0ea887b.jpg
+    00fe6c62c49b4d1cadd2311af831c60d.png
+    05006907b3fa4cab8770d40be28d2873.png
+    079d1d3155da48b3a6fe4936f5eb7638.jpg
+    0b37ca3bf9c248329b5ba5c92f68bc80.png
+    0d31f775b3984c93ae1a52a426e148e2.png
+    0e2109a27ae445d482196036228a7e55.jpg
+    144a31ee9f7942779c115f5889c14f91.png
+    148310035b3640f4b006e37e5038bbd7.png
+    1654236d58374ff2a445e1df8fe119ab.png
+    19060b059bf54673993f488dac2f87c6.png
+    1fea2ef47b40479191a4dc66f8be8b34.jpg
+    207f885d6e4b43b6885780740e481b61.jpg
+    20deb31477a54cd3a4917ce473cec81a.png
+    23bc85989c2743978e1951506be62d57.jpg
+    23e136390bc446f9aeff5b8cde6d379e.jpg
+    23fb0932b2f140fd9b14fa14de17b9de.png
+    265992c9ce594d2eace4cb1f705e68e7.png
+    297fe57918454708ba374933dbf8526d.jpg
+    2dc62afee6044c7ba1a1150b1ea0db64.png
+    2f19e455aa19494aa0aaca31df38b250.jpg
+    2f7883f57b2a4a71b1a9a4f8cb6796c0.png
+    2fe87d5ee601495d8aa6e43800dc4521.png
+    367945a863b74a4bbc14e5aa856cec48.png
+    399e58300500411b8dc77aa5ad3f320e.png
+    3b08e972f0364b6d8b479910e70802b3.jpg
+    3c70a07dc5214d238967b64d7ca98c59.png
+    3c76086a50324f9daaadcf2ee0b5b4c8.png
+    3ccbebd9db0743479ca4b1d9736d0a75.png
+    3d7036472e154cb08a28697d30dc7307.png
+    3e139fbc4cf0494387964c6aef69156b.png
+    40f2c48bc53942ebbe68240864032ddc.png
+    446afcc6dcfd4f1e90692991d65384c6.png
+    4523a9133fed4518adeb87b493f3e74e.jpg
+    465307a401f64eefb00cfaa8ab696835.jpg
+    466ec91402ec4511bdeebdc4d02dc7f0.png
+    4742e2a5e23542ecbdb6718befdc8ef5.jpg
+    4c8424be7a9f456d86cbf13981f90328.jpg
+    4c986cd9146f4c6b892c88ea4f6b19fc.png
+    4e60da1f5be34e57b35176136ef4090f.jpg
+    4f8243eb864149e29654d19d11f1bcde.png
+    54f562eddc324774bf21d7ba7f1a4b77.png
+    5621330330c4414eb371ca5042f98efc.png
+    57484da21cbd4b669320400781767b92.jpg
+    585c4a7912924b8d872b7666f3ec71b0.png
+    5902d0c7359a4682ace37e9094e4c696.png
+    5964bb7fa797468781ed603b3b62b680.png
+    5a9d0e496c504439990a2d608faf5c17.png
+    5d99c22ed0e14248ab2f0efb96a306b7.png
+    5e694db1c58a4686a90e26b582ecd60b.jpg
+    60eaab620ed1438eaf50a70d29419a69.png
+    6295093e583a4f0782f146aa79a89ec1.png
+    687f9711386341a68ae5dd63b00d3cd6.png
+    6c786f4843e74912a50a0413523fb9a6.png
+    72aaeafa7f4b458cbb1cd15ffe93531b.jpg
+    74eb3411eb80413083e97e6003928ae7.png
+    78b6240c4e564864a54088799e6eecd1.png
+    78be73349b264201b0179b8862868681.png
+    7f419f4180784c0086f89267a044039d.jpg
+    80951e82a9c0429993b632cec17a0d36.png
+    814f04134d244f7494b2e77f0992d030.png
+    820ecad3972b42bd9fb84130748dbd02.jpg
+    830a2f0e98f14437ae0d717a3ef122c6.jpg
+    83727f18067c409aade7a9f1712b2a09.jpg
+    88c8b2ad5f7f4c70843e431bd4b6def5.png
+    88ef049fea994d0797c34f7053a51041.png
+    8a9965e4c36b4eb691e67b4dd060eccb.jpg
+    8ba1d68156d0467fa2f210cdf64137ac.jpg
+    8d14c2820caa4c86a8fb4d1bc2e3f5df.png
+    8fdabd9069284bdc841ac4b2ebd09c35.png
+    8fde60724bca4b11b2e4d5bd8d429b6e.png
+    9358b79dab7c44109e71bf53e73dd3e9.png
+    939eb061508443b4851c9cb0751d479d.png
+    959de9c2d7e94dbbad57276c832fa7e5.png
+    95ed3e61530440639719802b8ff59b40.png
+    9a4b53ccb1644e138a7d3de690984b9c.png
+    9a73ff5a48e345278e8f7d0ee8e96021.png
+    a1fac47eb36e4970a0f1934207c94177.png
+    a26c9611b6c8487a9024866ebc48cbc2.png
+    a2a835ec53c24bd293d61aaac197e366.jpg
+    a381d5870943480685d3e2be6b0edd37.png
+    a3cdfe2b3ada4e3583a66da5e36948b0.png
+    a69e65211d1a4c6eaaabc1969ecb29c4.png
+    a8b912c282024c91bf8a388604e2ba96.jpg
+    a9f81cb3e958496996761d61711cb5ef.png
+    b05da8ad2e8a42e0aa263b129c6b8359.jpg
+    b2af6f24580046bd81d270dea373b54b.jpg
+    b593f34cf5d8408db666ad3c144a1bd4.jpg
+    b63d934d9764416c9a358ef4c3ad3f59.png
+    c038d28b8907402a8d2921614489f495.jpg
+    c4d2eb484b8c48d8811e5212f0a637b9.png
+    c5da2d893bb94c7188226a5011ad9661.png
+    c88866ae14f949aca21440c00544ad4e.jpg
+    ca88192b91e94f88b3464e1f617e8463.jpg
+    cc3601b953194b818a92023abde7e022.png
+    ce1d78f6468f4d85817c6d7dc31729cf.png
+    ce7d5b6984a041dda965c5d677edc057.jpg
+    d0e856cee0e540fa9fee4bf932c17f77.png
+    db61c70f29a5489e8780d9d5f093ae7a.png
+    de8844fcd26646bc9e8e82ce80818952.png
+    dee924039b164375a554e4ba2e7cd5d8.png
+    e2d2213555e044119d22d49d8510c1f1.jpg
+    e38d3009c43f4627a85173ef63d4436d.png
+    e759f0a7b0d64bb4a4804a6ad2e592c1.png
+    e92718ec38f1414bacdf5afc61439530.jpg
+    ed3180c9c3364fbc9869a68e2b66bf2f.png
+    f0b120e643a14140985fdfab52a92670.png
+    f0c52647ad5a4450a9490cbf18bcfa8d.png
+    f3379705588c487e94d3270ec879c72e.png
+    f4ad94411e6f4757ad61a50834edb976.png
+    f698b16ef59549899645bf0594a8270b.png
+    f7645539204748339880c4b592b4b475.png
+    fa8ecaa8449a4848bfd19028437de622.png
+    faac3d20cb8d46bd9ad7e4e0454b7562.png
+    fb2b5892aea743fb8774c270011b490b.png
+    fb677c6cd4574213bfd2f03ac877f6d9.jpg
+    fbb8c8627f57418da418e972db69f58e.png
+    fcc20c1c854248638916b755fbb73a65.webp
+    fff6e36728504420a43105c65cf2e72b.png
+.python-version
+chicken_cnn_final.tflite
+config.py
+gunicorn.conf.py
+Procfile
+requirements.txt
+run.py
+runtime.txt
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="app/models/detection.py">
+from app import get_db_connection
+
+
+class Detection:
+    @staticmethod
+    def create_table():
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS detections (
+                    id SERIAL PRIMARY KEY,
+                    user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+                    username VARCHAR(50),
+                    image_name VARCHAR(255),
+                    predicted_class VARCHAR(50) NOT NULL,
+                    confidence FLOAT NOT NULL,
+                    crd_prob FLOAT,
+                    fowlpox_prob FLOAT,
+                    healthy_prob FLOAT,
+                    chicken_count INTEGER NOT NULL DEFAULT 1,
+                    detected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+            cur.execute("ALTER TABLE detections ADD COLUMN IF NOT EXISTS user_id INTEGER REFERENCES users(id) ON DELETE SET NULL;")
+            cur.execute("ALTER TABLE detections ADD COLUMN IF NOT EXISTS chicken_count INTEGER NOT NULL DEFAULT 1;")
+            conn.commit()
+            print("[INFO] detections table created or already exists.")
+        except Exception as exc:
+            conn.rollback()
+            print(f"[ERROR] Failed to create detections table: {exc}")
+            raise
+        finally:
+            cur.close()
+            conn.close()
+
+    @staticmethod
+    def save_detection(username, image_name, predicted_class, confidence,
+                       crd_prob, fowlpox_prob, healthy_prob, user_id=None,
+                       chicken_count=1):
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute("""
+                INSERT INTO detections
+                (user_id, username, image_name, predicted_class,
+                 confidence, crd_prob, fowlpox_prob, healthy_prob, chicken_count)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                RETURNING id;
+            """, (
+                user_id,
+                username,
+                image_name,
+                predicted_class,
+                confidence,
+                crd_prob,
+                fowlpox_prob,
+                healthy_prob,
+                chicken_count
+            ))
+            detection_id = cur.fetchone()[0]
+            conn.commit()
+            return detection_id
+        except Exception as exc:
+            conn.rollback()
+            print(f"[ERROR] Failed to save detection: {exc}")
+            return None
+        finally:
+            cur.close()
+            conn.close()
+
+    @staticmethod
+    def get_all_detections(username=None, result_filter='', date_from='', date_to=''):
+        conn = get_db_connection()
+        cur = conn.cursor()
+        conditions = []
+        params = []
+
+        if username:
+            conditions.append("COALESCE(u.username, d.username) = %s")
+            params.append(username)
+        if result_filter:
+            conditions.append("LOWER(d.predicted_class) = %s")
+            params.append(result_filter.lower())
+        if date_from:
+            conditions.append("DATE(d.detected_at) >= %s")
+            params.append(date_from)
+        if date_to:
+            conditions.append("DATE(d.detected_at) <= %s")
+            params.append(date_to)
+
+        where_clause = f"WHERE {' AND '.join(conditions)}" if conditions else ''
+
+        try:
+            cur.execute(f"""
+                SELECT
+                    d.id,
+                    d.user_id,
+                    COALESCE(u.username, d.username) AS username,
+                    COALESCE(u.email, '') AS email,
+                    d.image_name,
+                    d.predicted_class,
+                    d.confidence,
+                    d.crd_prob,
+                    d.fowlpox_prob,
+                    d.healthy_prob,
+                    d.chicken_count,
+                    d.detected_at
+                FROM detections d
+                LEFT JOIN users u ON u.id = d.user_id
+                {where_clause}
+                ORDER BY d.detected_at DESC;
+            """, params)
+            rows = cur.fetchall()
+            return [{
+                'id': row[0],
+                'user_id': row[1],
+                'username': row[2],
+                'email': row[3],
+                'image_name': row[4],
+                'predicted_class': row[5],
+                'confidence': float(row[6]),
+                'crd_prob': float(row[7] or 0),
+                'fowlpox_prob': float(row[8] or 0),
+                'healthy_prob': float(row[9] or 0),
+                'chicken_count': int(row[10] or 0),
+                'detected_at': row[11]
+            } for row in rows]
+        except Exception as exc:
+            print(f"[ERROR] Failed to fetch detections: {exc}")
+            return []
+        finally:
+            cur.close()
+            conn.close()
+
+    @staticmethod
+    def get_statistics():
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute("""
+                SELECT LOWER(predicted_class) AS predicted_class, COUNT(*) AS total
+                FROM detections
+                GROUP BY LOWER(predicted_class);
+            """)
+            rows = cur.fetchall()
+            stats = {}
+            for row in rows:
+                stats[row[0]] = int(row[1] or 0)
+            return stats
+        except Exception as exc:
+            print(f"[ERROR] Failed to fetch statistics: {exc}")
+            return {}
+        finally:
+            cur.close()
+            conn.close()
+
+    @staticmethod
+    def get_admin_summary():
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute("""
+                SELECT
+                    COUNT(*) AS total_detections,
+                    COALESCE(SUM(CASE
+                        WHEN LOWER(predicted_class) = 'no_chicken' THEN 0
+                        ELSE COALESCE(chicken_count, 1)
+                    END), 0) AS total_chickens_detected,
+                    COALESCE(SUM(CASE
+                        WHEN LOWER(predicted_class) IN ('healthy', 'chicken', 'no_chicken') THEN 0
+                        ELSE 1
+                    END), 0) AS total_disease_cases
+                FROM detections;
+            """)
+            row = cur.fetchone()
+            return {
+                'total_detections': int(row[0] or 0),
+                'total_chickens_detected': int(row[1] or 0),
+                'total_disease_cases': int(row[2] or 0)
+            }
+        except Exception as exc:
+            print(f"[ERROR] Failed to fetch admin summary: {exc}")
+            return {
+                'total_detections': 0,
+                'total_chickens_detected': 0,
+                'total_disease_cases': 0
+            }
+        finally:
+            cur.close()
+            conn.close()
+
+    @staticmethod
+    def delete_detection(detection_id):
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute("DELETE FROM detections WHERE id = %s;", (detection_id,))
+            conn.commit()
+            return cur.rowcount > 0
+        except Exception as exc:
+            conn.rollback()
+            print(f"[ERROR] Failed to delete detection: {exc}")
+            return False
+        finally:
+            cur.close()
+            conn.close()
+</file>
+
+<file path="app/models/user.py">
+from app import bcrypt, get_db_connection
+from config import DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD, DEFAULT_ADMIN_USERNAME
+
+
+class User:
+    VALID_ROLES = {'admin', 'user'}
+    VALID_STATUSES = {'active', 'inactive'}
+
+    @staticmethod
+    def create_table():
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                    id SERIAL PRIMARY KEY,
+                    username VARCHAR(50) NOT NULL UNIQUE,
+                    email VARCHAR(100) NOT NULL UNIQUE,
+                    password VARCHAR(255) NOT NULL,
+                    role VARCHAR(20) NOT NULL DEFAULT 'user',
+                    status VARCHAR(20) NOT NULL DEFAULT 'active',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+            cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) NOT NULL DEFAULT 'user';")
+            cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'active';")
+            cur.execute("UPDATE users SET role = 'admin' WHERE LOWER(username) = 'admin';")
+            conn.commit()
+            print("[INFO] users table created or already exists.")
+        except Exception as exc:
+            conn.rollback()
+            print(f"[ERROR] Failed to create users table: {exc}")
+            raise
+        finally:
+            cur.close()
+            conn.close()
+
+    @staticmethod
+    def _row_to_dict(row):
+        if not row:
+            return None
+        return {
+            'id': row[0],
+            'username': row[1],
+            'email': row[2],
+            'password': row[3],
+            'role': row[4],
+            'status': row[5],
+            'created_at': row[6]
+        }
+
+    @staticmethod
+    def find_by_username(username):
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute("""
+                SELECT id, username, email, password, role, status, created_at
+                FROM users
+                WHERE username = %s;
+            """, (username,))
+            return User._row_to_dict(cur.fetchone())
+        finally:
+            cur.close()
+            conn.close()
+
+    @staticmethod
+    def find_by_email(email):
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute("""
+                SELECT id, username, email, password, role, status, created_at
+                FROM users
+                WHERE email = %s;
+            """, (email,))
+            return User._row_to_dict(cur.fetchone())
+        finally:
+            cur.close()
+            conn.close()
+
+    @staticmethod
+    def get_user_by_id(user_id):
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute("""
+                SELECT id, username, email, password, role, status, created_at
+                FROM users
+                WHERE id = %s;
+            """, (user_id,))
+            return User._row_to_dict(cur.fetchone())
+        finally:
+            cur.close()
+            conn.close()
+
+    @staticmethod
+    def create_user(username, email, password, role='user', status='active'):
+        if username and username.strip().lower() == 'admin':
+            role = 'admin'
+        role = role if role in User.VALID_ROLES else 'user'
+        status = status if status in User.VALID_STATUSES else 'active'
+        conn = get_db_connection()
+        cur = conn.cursor()
+        hashed_pw = bcrypt.generate_password_hash(password).decode('utf-8')
+        try:
+            cur.execute("""
+                INSERT INTO users (username, email, password, role, status)
+                VALUES (%s, %s, %s, %s, %s)
+                RETURNING id;
+            """, (username, email, hashed_pw, role, status))
+            user_id = cur.fetchone()[0]
+            conn.commit()
+            return user_id
+        except Exception as exc:
+            conn.rollback()
+            print(f"[ERROR] Failed to create user: {exc}")
+            return None
+        finally:
+            cur.close()
+            conn.close()
+
+    @staticmethod
+    def ensure_admin_role(username):
+        if not username or username.strip().lower() != 'admin':
+            return
+
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute("""
+                UPDATE users
+                SET role = 'admin'
+                WHERE LOWER(username) = 'admin'
+                  AND role <> 'admin';
+            """)
+            conn.commit()
+        except Exception as exc:
+            conn.rollback()
+            print(f"[ERROR] Failed to ensure admin role: {exc}")
+        finally:
+            cur.close()
+            conn.close()
+
+    @staticmethod
+    def get_all_users(search='', role='', status=''):
+        conn = get_db_connection()
+        cur = conn.cursor()
+        conditions = []
+        params = []
+
+        if search:
+            conditions.append("(u.username ILIKE %s OR u.email ILIKE %s)")
+            params.extend([f"%{search}%", f"%{search}%"])
+        if role:
+            conditions.append("u.role = %s")
+            params.append(role)
+        if status:
+            conditions.append("u.status = %s")
+            params.append(status)
+
+        where_clause = f"WHERE {' AND '.join(conditions)}" if conditions else ''
+
+        try:
+            cur.execute(f"""
+                SELECT
+                    u.id,
+                    u.username,
+                    u.email,
+                    u.role,
+                    u.status,
+                    u.created_at,
+                    COUNT(d.id) AS detection_count,
+                    COALESCE(SUM(CASE
+                        WHEN LOWER(COALESCE(d.predicted_class, '')) = 'no_chicken' THEN 0
+                        ELSE COALESCE(d.chicken_count, 1)
+                    END), 0) AS chicken_count
+                FROM users u
+                LEFT JOIN detections d
+                    ON d.user_id = u.id
+                    OR (d.user_id IS NULL AND d.username = u.username)
+                {where_clause}
+                GROUP BY u.id, u.username, u.email, u.role, u.status, u.created_at
+                ORDER BY u.created_at DESC;
+            """, params)
+            rows = cur.fetchall()
+            return [{
+                'id': row[0],
+                'username': row[1],
+                'email': row[2],
+                'role': row[3],
+                'status': row[4],
+                'created_at': row[5],
+                'detection_count': int(row[6] or 0),
+                'chicken_count': int(row[7] or 0)
+            } for row in rows]
+        except Exception as exc:
+            print(f"[ERROR] Failed to fetch users: {exc}")
+            return []
+        finally:
+            cur.close()
+            conn.close()
+
+    @staticmethod
+    def update_user(user_id, username, email, role, status, password=None):
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            if password:
+                hashed_pw = bcrypt.generate_password_hash(password).decode('utf-8')
+                cur.execute("""
+                    UPDATE users
+                    SET username = %s,
+                        email = %s,
+                        role = %s,
+                        status = %s,
+                        password = %s
+                    WHERE id = %s;
+                """, (username, email, role, status, hashed_pw, user_id))
+            else:
+                cur.execute("""
+                    UPDATE users
+                    SET username = %s,
+                        email = %s,
+                        role = %s,
+                        status = %s
+                    WHERE id = %s;
+                """, (username, email, role, status, user_id))
+            updated_rows = cur.rowcount
+
+            cur.execute("""
+                UPDATE detections
+                SET username = %s
+                WHERE user_id = %s;
+            """, (username, user_id))
+            conn.commit()
+            return updated_rows > 0
+        except Exception as exc:
+            conn.rollback()
+            print(f"[ERROR] Failed to update user: {exc}")
+            return False
+        finally:
+            cur.close()
+            conn.close()
+
+    @staticmethod
+    def set_status(user_id, status):
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute("""
+                UPDATE users
+                SET status = %s
+                WHERE id = %s;
+            """, (status, user_id))
+            conn.commit()
+            return cur.rowcount > 0
+        except Exception as exc:
+            conn.rollback()
+            print(f"[ERROR] Failed to update user status: {exc}")
+            return False
+        finally:
+            cur.close()
+            conn.close()
+
+    @staticmethod
+    def delete_user(user_id):
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute("DELETE FROM users WHERE id = %s;", (user_id,))
+            conn.commit()
+            return cur.rowcount > 0
+        except Exception as exc:
+            conn.rollback()
+            print(f"[ERROR] Failed to delete user: {exc}")
+            return False
+        finally:
+            cur.close()
+            conn.close()
+
+    @staticmethod
+    def get_total_users():
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute("SELECT COUNT(*) FROM users;")
+            return int(cur.fetchone()[0] or 0)
+        finally:
+            cur.close()
+            conn.close()
+
+    @staticmethod
+    def ensure_default_admin():
+        existing = User.find_by_username(DEFAULT_ADMIN_USERNAME)
+        if existing:
+            if existing['role'] != 'admin' or existing['status'] != 'active':
+                User.update_user(
+                    existing['id'],
+                    existing['username'],
+                    existing['email'],
+                    'admin',
+                    'active'
+                )
+            return existing['id']
+
+        admin_id = User.create_user(
+            DEFAULT_ADMIN_USERNAME,
+            DEFAULT_ADMIN_EMAIL,
+            DEFAULT_ADMIN_PASSWORD,
+            role='admin',
+            status='active'
+        )
+
+        if admin_id:
+            print(f"[INFO] Default admin created: username={DEFAULT_ADMIN_USERNAME}")
+        return admin_id
+</file>
+
+<file path="app/routes/test_early_auth/__init__.py">
+
+</file>
+
+<file path="app/routes/test_early_auth/test_early_register.py">
+# test_auth.py
+
+import pytest
+from unittest.mock import patch, MagicMock
+from flask import Flask, json
+
+# Import the Blueprint under test
+from app.routes.auth import auth_bp
+
+@pytest.fixture
+def client():
+    """
+    Fixture to create a Flask test client with the auth blueprint registered.
+    """
+    app = Flask(__name__)
+    app.register_blueprint(auth_bp)
+    app.config['TESTING'] = True
+    with app.test_client() as client:
+        yield client
+
+class TestRegister:
+    """
+    Unit tests for the 'register' function in app/routes/auth.py.
+    """
+
+    # -------------------- HAPPY PATHS --------------------
+
+    @pytest.mark.happy_path
+    def test_register_successful(self, client):
+        """
+        Test successful registration with valid username, email, and password.
+        """
+        data = {
+            'username': 'testuser',
+            'email': 'test@example.com',
+            'password': 'securepassword',
+            'lang': 'en'
+        }
+        with patch('app.routes.auth.User.find_by_username', return_value=None), \
+             patch('app.routes.auth.User.find_by_email', return_value=None), \
+             patch('app.routes.auth.User.create_user', return_value=123), \
+             patch('app.routes.auth.get_message', return_value='Registration successful!'):
+            response = client.post('/api/register', json=data)
+            assert response.status_code == 201
+            resp_json = response.get_json()
+            assert resp_json['success'] is True
+            assert resp_json['message'] == 'Registration successful!'
+
+    @pytest.mark.happy_path
+    def test_register_successful_with_default_lang(self, client):
+        """
+        Test registration when 'lang' is not provided (should default to 'en').
+        """
+        data = {
+            'username': 'testuser2',
+            'email': 'test2@example.com',
+            'password': 'securepassword'
+        }
+        with patch('app.routes.auth.User.find_by_username', return_value=None), \
+             patch('app.routes.auth.User.find_by_email', return_value=None), \
+             patch('app.routes.auth.User.create_user', return_value=456), \
+             patch('app.routes.auth.get_message', return_value='Registration successful!'):
+            response = client.post('/api/register', json=data)
+            assert response.status_code == 201
+            resp_json = response.get_json()
+            assert resp_json['success'] is True
+            assert resp_json['message'] == 'Registration successful!'
+
+    # -------------------- EDGE CASES --------------------
+
+    @pytest.mark.edge_case
+    def test_register_missing_username(self, client):
+        """
+        Test registration fails when username is missing.
+        """
+        data = {
+            'email': 'test@example.com',
+            'password': 'securepassword'
+        }
+        with patch('app.routes.auth.get_message', return_value='Missing fields!'):
+            response = client.post('/api/register', json=data)
+            assert response.status_code == 400
+            resp_json = response.get_json()
+            assert resp_json['success'] is False
+            assert resp_json['message'] == 'Missing fields!'
+
+    @pytest.mark.edge_case
+    def test_register_missing_email(self, client):
+        """
+        Test registration fails when email is missing.
+        """
+        data = {
+            'username': 'testuser',
+            'password': 'securepassword'
+        }
+        with patch('app.routes.auth.get_message', return_value='Missing fields!'):
+            response = client.post('/api/register', json=data)
+            assert response.status_code == 400
+            resp_json = response.get_json()
+            assert resp_json['success'] is False
+            assert resp_json['message'] == 'Missing fields!'
+
+    @pytest.mark.edge_case
+    def test_register_missing_password(self, client):
+        """
+        Test registration fails when password is missing.
+        """
+        data = {
+            'username': 'testuser',
+            'email': 'test@example.com'
+        }
+        with patch('app.routes.auth.get_message', return_value='Missing fields!'):
+            response = client.post('/api/register', json=data)
+            assert response.status_code == 400
+            resp_json = response.get_json()
+            assert resp_json['success'] is False
+            assert resp_json['message'] == 'Missing fields!'
+
+    @pytest.mark.edge_case
+    def test_register_blank_username(self, client):
+        """
+        Test registration fails when username is blank or only whitespace.
+        """
+        data = {
+            'username': '   ',
+            'email': 'test@example.com',
+            'password': 'securepassword'
+        }
+        with patch('app.routes.auth.get_message', return_value='Missing fields!'):
+            response = client.post('/api/register', json=data)
+            assert response.status_code == 400
+            resp_json = response.get_json()
+            assert resp_json['success'] is False
+            assert resp_json['message'] == 'Missing fields!'
+
+    @pytest.mark.edge_case
+    def test_register_blank_email(self, client):
+        """
+        Test registration fails when email is blank or only whitespace.
+        """
+        data = {
+            'username': 'testuser',
+            'email': '   ',
+            'password': 'securepassword'
+        }
+        with patch('app.routes.auth.get_message', return_value='Missing fields!'):
+            response = client.post('/api/register', json=data)
+            assert response.status_code == 400
+            resp_json = response.get_json()
+            assert resp_json['success'] is False
+            assert resp_json['message'] == 'Missing fields!'
+
+    @pytest.mark.edge_case
+    def test_register_blank_password(self, client):
+        """
+        Test registration fails when password is blank.
+        """
+        data = {
+            'username': 'testuser',
+            'email': 'test@example.com',
+            'password': ''
+        }
+        with patch('app.routes.auth.get_message', return_value='Missing fields!'):
+            response = client.post('/api/register', json=data)
+            assert response.status_code == 400
+            resp_json = response.get_json()
+            assert resp_json['success'] is False
+            assert resp_json['message'] == 'Missing fields!'
+
+    @pytest.mark.edge_case
+    def test_register_existing_username(self, client):
+        """
+        Test registration fails when username already exists.
+        """
+        data = {
+            'username': 'existinguser',
+            'email': 'newemail@example.com',
+            'password': 'securepassword'
+        }
+        with patch('app.routes.auth.User.find_by_username', return_value=MagicMock()), \
+             patch('app.routes.auth.get_message', return_value='Username or email already exists!'):
+            response = client.post('/api/register', json=data)
+            assert response.status_code == 409
+            resp_json = response.get_json()
+            assert resp_json['success'] is False
+            assert resp_json['message'] == 'Username or email already exists!'
+
+    @pytest.mark.edge_case
+    def test_register_existing_email(self, client):
+        """
+        Test registration fails when email already exists.
+        """
+        data = {
+            'username': 'newuser',
+            'email': 'existing@example.com',
+            'password': 'securepassword'
+        }
+        with patch('app.routes.auth.User.find_by_username', return_value=None), \
+             patch('app.routes.auth.User.find_by_email', return_value=MagicMock()), \
+             patch('app.routes.auth.get_message', return_value='Username or email already exists!'):
+            response = client.post('/api/register', json=data)
+            assert response.status_code == 409
+            resp_json = response.get_json()
+            assert resp_json['success'] is False
+            assert resp_json['message'] == 'Username or email already exists!'
+
+    @pytest.mark.edge_case
+    def test_register_create_user_failure(self, client):
+        """
+        Test registration fails with 500 if user creation fails (create_user returns None/False).
+        """
+        data = {
+            'username': 'testuser',
+            'email': 'test@example.com',
+            'password': 'securepassword'
+        }
+        with patch('app.routes.auth.User.find_by_username', return_value=None), \
+             patch('app.routes.auth.User.find_by_email', return_value=None), \
+             patch('app.routes.auth.User.create_user', return_value=None), \
+             patch('app.routes.auth.get_message', return_value='Registration failed!'):
+            response = client.post('/api/register', json=data)
+            assert response.status_code == 500
+            resp_json = response.get_json()
+            assert resp_json['success'] is False
+            assert resp_json['message'] == 'Registration failed!'
+
+    @pytest.mark.edge_case
+    def test_register_non_json_payload(self, client):
+        """
+        Test registration fails gracefully if request data is not JSON.
+        """
+        with patch('app.routes.auth.get_message', return_value='Missing fields!'):
+            response = client.post('/api/register', data="notjson", content_type='text/plain')
+            assert response.status_code == 400
+            resp_json = response.get_json()
+            assert resp_json['success'] is False
+            assert resp_json['message'] == 'Missing fields!'
+
+    @pytest.mark.edge_case
+    def test_register_empty_json(self, client):
+        """
+        Test registration fails when empty JSON is sent.
+        """
+        with patch('app.routes.auth.get_message', return_value='Missing fields!'):
+            response = client.post('/api/register', json={})
+            assert response.status_code == 400
+            resp_json = response.get_json()
+            assert resp_json['success'] is False
+            assert resp_json['message'] == 'Missing fields!'
+</file>
+
+<file path="app/routes/admin.py">
+from flask import Blueprint, g, jsonify, request
+
+from app.models.detection import Detection
+from app.models.user import User
+from app.utils.auth import require_auth
+
+admin_bp = Blueprint('admin', __name__)
+
+
+def _clean_user_payload(data, require_password):
+    username = (data.get('username') or '').strip()
+    email = (data.get('email') or '').strip()
+    role = (data.get('role') or 'user').strip().lower()
+    status = (data.get('status') or 'active').strip().lower()
+    password = data.get('password') or ''
+
+    if not username or not email:
+        return None, 'Username and email are required.'
+    if role not in User.VALID_ROLES:
+        return None, 'Role must be admin or user.'
+    if status not in User.VALID_STATUSES:
+        return None, 'Status must be active or inactive.'
+    if require_password and not password:
+        return None, 'Password is required.'
+
+    return {
+        'username': username,
+        'email': email,
+        'role': role,
+        'status': status,
+        'password': password
+    }, None
+
+
+def _serialize_user(user):
+    return {
+        'id': user['id'],
+        'username': user['username'],
+        'email': user['email'],
+        'role': user['role'],
+        'status': user['status'],
+        'created_at': str(user['created_at'])
+    }
+
+
+@admin_bp.route('/api/admin/summary', methods=['GET'])
+@require_auth(admin_only=True)
+def admin_summary():
+    detection_summary = Detection.get_admin_summary()
+    return jsonify({
+        'success': True,
+        'summary': {
+            'total_users': User.get_total_users(),
+            **detection_summary
+        }
+    }), 200
+
+
+@admin_bp.route('/api/admin/users', methods=['GET'])
+@require_auth(admin_only=True)
+def list_users():
+    search = request.args.get('search', '').strip()
+    role = request.args.get('role', '').strip().lower()
+    status = request.args.get('status', '').strip().lower()
+    users = User.get_all_users(search=search, role=role, status=status)
+    return jsonify({
+        'success': True,
+        'users': [{
+            **user,
+            'created_at': str(user['created_at'])
+        } for user in users],
+        'total': len(users)
+    }), 200
+
+
+@admin_bp.route('/api/admin/users', methods=['POST'])
+@require_auth(admin_only=True)
+def create_user():
+    payload, error = _clean_user_payload(request.get_json() or {}, require_password=True)
+    if error:
+        return jsonify({'success': False, 'message': error}), 400
+
+    if User.find_by_username(payload['username']):
+        return jsonify({'success': False, 'message': 'Username already exists.'}), 409
+    if User.find_by_email(payload['email']):
+        return jsonify({'success': False, 'message': 'Email already exists.'}), 409
+
+    user_id = User.create_user(
+        payload['username'],
+        payload['email'],
+        payload['password'],
+        payload['role'],
+        payload['status']
+    )
+    if not user_id:
+        return jsonify({'success': False, 'message': 'Failed to create user.'}), 500
+
+    created_user = User.get_user_by_id(user_id)
+
+    return jsonify({
+        'success': True,
+        'message': 'User created successfully.',
+        'user': _serialize_user(created_user)
+    }), 201
+
+
+@admin_bp.route('/api/admin/users/<int:user_id>', methods=['PUT'])
+@require_auth(admin_only=True)
+def update_user(user_id):
+    existing = User.get_user_by_id(user_id)
+    if not existing:
+        return jsonify({'success': False, 'message': 'User not found.'}), 404
+
+    payload, error = _clean_user_payload(request.get_json() or {}, require_password=False)
+    if error:
+        return jsonify({'success': False, 'message': error}), 400
+
+    other_user = User.find_by_username(payload['username'])
+    if other_user and other_user['id'] != user_id:
+        return jsonify({'success': False, 'message': 'Username already exists.'}), 409
+
+    other_email = User.find_by_email(payload['email'])
+    if other_email and other_email['id'] != user_id:
+        return jsonify({'success': False, 'message': 'Email already exists.'}), 409
+
+    if g.current_user['id'] == user_id and payload['role'] != 'admin':
+        return jsonify({'success': False, 'message': 'You cannot remove your own admin role.'}), 400
+
+    if g.current_user['id'] == user_id and payload['status'] != 'active':
+        return jsonify({'success': False, 'message': 'You cannot deactivate your own account.'}), 400
+
+    updated = User.update_user(
+        user_id,
+        payload['username'],
+        payload['email'],
+        payload['role'],
+        payload['status'],
+        payload['password'] or None
+    )
+    if not updated:
+        return jsonify({'success': False, 'message': 'Failed to update user.'}), 500
+
+    refreshed = User.get_user_by_id(user_id)
+    return jsonify({
+        'success': True,
+        'message': 'User updated successfully.',
+        'user': _serialize_user(refreshed)
+    }), 200
+
+
+@admin_bp.route('/api/admin/users/<int:user_id>', methods=['DELETE'])
+@require_auth(admin_only=True)
+def delete_user(user_id):
+    if g.current_user['id'] == user_id:
+        return jsonify({'success': False, 'message': 'You cannot delete your own account.'}), 400
+
+    if not User.get_user_by_id(user_id):
+        return jsonify({'success': False, 'message': 'User not found.'}), 404
+
+    deleted = User.delete_user(user_id)
+    if not deleted:
+        return jsonify({'success': False, 'message': 'Failed to delete user.'}), 500
+
+    return jsonify({
+        'success': True,
+        'message': 'User deleted successfully.'
+    }), 200
+
+
+@admin_bp.route('/api/admin/users/<int:user_id>/status', methods=['PATCH'])
+@require_auth(admin_only=True)
+def update_user_status(user_id):
+    data = request.get_json() or {}
+    status = (data.get('status') or '').strip().lower()
+
+    if status not in User.VALID_STATUSES:
+        return jsonify({'success': False, 'message': 'Status must be active or inactive.'}), 400
+
+    if g.current_user['id'] == user_id and status != 'active':
+        return jsonify({'success': False, 'message': 'You cannot deactivate your own account.'}), 400
+
+    if not User.get_user_by_id(user_id):
+        return jsonify({'success': False, 'message': 'User not found.'}), 404
+
+    updated = User.set_status(user_id, status)
+    if not updated:
+        return jsonify({'success': False, 'message': 'Failed to update user status.'}), 500
+
+    return jsonify({
+        'success': True,
+        'message': f'User status updated to {status}.'
+    }), 200
+
+
+@admin_bp.route('/api/admin/detections', methods=['GET'])
+@require_auth(admin_only=True)
+def list_detections():
+    result_filter = request.args.get('result', '').strip()
+    date_from = request.args.get('date_from', '').strip()
+    date_to = request.args.get('date_to', '').strip()
+    detections = Detection.get_all_detections(
+        result_filter=result_filter,
+        date_from=date_from,
+        date_to=date_to
+    )
+
+    search = request.args.get('search', '').strip().lower()
+    if search:
+        detections = [
+            item for item in detections
+            if search in (item['username'] or '').lower()
+            or search in (item['predicted_class'] or '').lower()
+        ]
+
+    return jsonify({
+        'success': True,
+        'detections': [{
+            **item,
+            'detected_at': str(item['detected_at']),
+            'image_url': f"/uploads/{item['image_name']}" if item['image_name'] else ''
+        } for item in detections],
+        'total': len(detections)
+    }), 200
+
+
+@admin_bp.route('/api/admin/detections/<int:detection_id>', methods=['DELETE'])
+@require_auth(admin_only=True)
+def delete_detection(detection_id):
+    deleted = Detection.delete_detection(detection_id)
+    if not deleted:
+        return jsonify({'success': False, 'message': 'Detection record not found.'}), 404
+
+    return jsonify({
+        'success': True,
+        'message': 'Detection record deleted successfully.'
+    }), 200
+</file>
+
+<file path="app/routes/auth.py">
+from flask import Blueprint, jsonify, request
+
+from app import bcrypt
+from app.models.user import User
+from app.utils.auth import generate_auth_token, require_auth
+from app.utils.helpers import check_password, get_message
+
+auth_bp = Blueprint('auth', __name__)
+
+
+def _serialize_user(user):
+    return {
+        'id': user['id'],
+        'username': user['username'],
+        'email': user['email'],
+        'role': user['role'],
+        'status': user['status'],
+        'is_admin': user['role'] == 'admin',
+        'created_at': str(user['created_at'])
+    }
+
+
+@auth_bp.route('/api/register', methods=['POST'])
+def register():
+    data = request.get_json() or {}
+    username = data.get('username', '').strip()
+    email = data.get('email', '').strip()
+    password = data.get('password', '')
+    lang = data.get('lang', 'en')
+
+    if not username or not email or not password:
+        return jsonify({
+            'success': False,
+            'message': get_message('register_error', lang)
+        }), 400
+
+    if User.find_by_username(username) or User.find_by_email(email):
+        return jsonify({
+            'success': False,
+            'message': get_message('register_exists', lang)
+        }), 409
+
+    role = 'admin' if username.lower() == 'admin' else 'user'
+    user_id = User.create_user(username, email, password, role=role, status='active')
+    if not user_id:
+        return jsonify({
+            'success': False,
+            'message': get_message('register_error', lang)
+        }), 500
+
+    return jsonify({
+        'success': True,
+        'message': get_message('register_success', lang),
+        'user_id': user_id
+    }), 201
+
+
+@auth_bp.route('/api/login', methods=['POST'])
+def login():
+    data = request.get_json() or {}
+    username = data.get('username', '').strip()
+    password = data.get('password', '')
+    lang = data.get('lang', 'en')
+
+    User.ensure_admin_role(username)
+    user = User.find_by_username(username)
+    if not user:
+        return jsonify({
+            'success': False,
+            'message': get_message('login_invalid', lang)
+        }), 401
+
+    if user['status'] != 'active':
+        return jsonify({
+            'success': False,
+            'message': 'Your account is inactive. Please contact an administrator.'
+        }), 403
+
+    if not check_password(bcrypt, user['password'], password):
+        return jsonify({
+            'success': False,
+            'message': get_message('login_invalid', lang)
+        }), 401
+
+    return jsonify({
+        'success': True,
+        'message': get_message('login_success', lang),
+        'token': generate_auth_token(user),
+        'user': _serialize_user(user)
+    }), 200
+
+
+@auth_bp.route('/api/me', methods=['GET'])
+@require_auth()
+def me():
+    from flask import g
+
+    return jsonify({
+        'success': True,
+        'user': _serialize_user(g.current_user)
+    }), 200
+</file>
+
+<file path="app/routes/predict.py">
+import os
+import uuid
+
+from flask import Blueprint, jsonify, request
+import gdown
+import numpy as np
+from PIL import Image
+import tensorflow as tf
+
+from app.models.detection import Detection
+from app.models.user import User
+
+predict_bp = Blueprint('predict', __name__)
+
+BASE_DIR      = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+MODEL_PATH    = os.path.join(BASE_DIR, 'chicken_cnn_final.tflite')
+FILTER_PATH   = os.path.join(BASE_DIR, 'filter_cnn.tflite')
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'frontend', 'uploads')
+
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# ── Download Disease CNN ──────────────────────────────────────────────────────
+if not os.path.exists(MODEL_PATH):
+    print("[INFO] Downloading Disease CNN...")
+    try:
+        gdown.download(
+            id="1RhX6Ea_f0xLkjvqThiE_HqEQAbgXZOLO",
+            output=MODEL_PATH, quiet=False)
+        print("[INFO] Disease CNN downloaded.")
+    except Exception as exc:
+        print(f"[WARN] Could not download Disease CNN: {exc}")
+else:
+    print("[INFO] Disease CNN already exists.")
+
+# ── Download Filter CNN ───────────────────────────────────────────────────────
+if not os.path.exists(FILTER_PATH):
+    print("[INFO] Downloading Filter CNN...")
+    try:
+        gdown.download(
+            id="1yRseVKg0GsL_xRzfQ8FUetoUccUpni4Q",
+            output=FILTER_PATH, quiet=False)
+        print("[INFO] Filter CNN downloaded.")
+    except Exception as exc:
+        print(f"[WARN] Could not download Filter CNN: {exc}")
+else:
+    print("[INFO] Filter CNN already exists.")
+
+# ── Load Disease CNN (TFLite) ─────────────────────────────────────────────────
+interpreter    = None
+input_details  = None
+output_details = None
+
+try:
+    interpreter = tf.lite.Interpreter(model_path=MODEL_PATH)
+    interpreter.allocate_tensors()
+    input_details  = interpreter.get_input_details()
+    output_details = interpreter.get_output_details()
+    print("[INFO] Disease CNN loaded successfully.")
+except Exception as exc:
+    interpreter = None
+    print(f"[ERROR] Failed to load Disease CNN: {exc}")
+
+# ── Load Filter CNN (TFLite) ──────────────────────────────────────────────────
+filter_interpreter    = None
+filter_input_details  = None
+filter_output_details = None
+
+try:
+    filter_interpreter = tf.lite.Interpreter(model_path=FILTER_PATH)
+    filter_interpreter.allocate_tensors()
+    filter_input_details  = filter_interpreter.get_input_details()
+    filter_output_details = filter_interpreter.get_output_details()
+    print("[INFO] Filter CNN loaded successfully.")
+except Exception as exc:
+    filter_interpreter = None
+    print(f"[ERROR] Failed to load Filter CNN: {exc}")
+
+# ── Constants ─────────────────────────────────────────────────────────────────
+CLASSES = ['crd', 'fowlpox', 'healthy']
+
+ADVICE = {
+    'crd': {
+        'full_name': 'Chronic Respiratory Disease (CRD)',
+        'symptoms': 'Nasal discharge, coughing, swollen face, breathing difficulty',
+        'urgency': 'High - Act within 24 hours',
+        'treatment': [
+            'Isolate infected birds immediately',
+            'Administer Tylosin or Oxytetracycline antibiotics',
+            'Improve ventilation in the poultry house',
+            'Consult a veterinarian for proper dosage',
+            'Disinfect the poultry house thoroughly'
+        ]
+    },
+    'fowlpox': {
+        'full_name': 'Fowl Pox',
+        'symptoms': 'Wart-like lesions on comb, face, and legs',
+        'urgency': 'Medium - Act within 48 hours',
+        'treatment': [
+            'Isolate infected birds from healthy flock',
+            'Apply iodine solution to lesions',
+            'Vaccinate healthy birds immediately',
+            'Provide vitamin A supplements',
+            'Keep wounds clean to prevent secondary infections'
+        ]
+    },
+    'healthy': {
+        'full_name': 'Healthy Chicken',
+        'symptoms': 'No disease symptoms detected',
+        'urgency': 'None - Continue routine care',
+        'treatment': [
+            'Continue regular feeding schedule',
+            'Maintain clean water supply',
+            'Keep poultry house well ventilated',
+            'Monitor flock regularly',
+            'Keep vaccination schedule up to date'
+        ]
+    }
+}
+
+
+def preprocess_image(image_path):
+    img = Image.open(image_path).convert('RGB')
+    img = img.resize((224, 224))
+    img_array = np.array(img, dtype=np.float32) / 255.0
+    return np.expand_dims(img_array, axis=0)
+
+
+def run_filter_cnn(image_path):
+    img_array = preprocess_image(image_path)
+    filter_interpreter.set_tensor(
+        filter_input_details[0]['index'], img_array)
+    filter_interpreter.invoke()
+    pred = filter_interpreter.get_tensor(
+        filter_output_details[0]['index'])
+    return float(pred[0][0])
+
+
+def run_disease_cnn(image_path):
+    img_array = preprocess_image(image_path)
+    interpreter.set_tensor(input_details[0]['index'], img_array)
+    interpreter.invoke()
+    return interpreter.get_tensor(output_details[0]['index'])[0]
+
+
+@predict_bp.route('/api/predict', methods=['POST'])
+def predict():
+    if interpreter is None:
+        return jsonify({'success': False,
+                        'message': 'Disease CNN not available'}), 500
+    if filter_interpreter is None:
+        return jsonify({'success': False,
+                        'message': 'Filter CNN not available'}), 500
+    if 'file' not in request.files:
+        return jsonify({'success': False,
+                        'message': 'No image uploaded'}), 400
+
+    file     = request.files['file']
+    username = request.form.get('username', 'unknown')
+    user     = User.find_by_username(username) if username and username != 'unknown' else None
+
+    if file.filename == '':
+        return jsonify({'success': False, 'message': 'No file selected'}), 400
+
+    try:
+        ext         = os.path.splitext(file.filename)[1]
+        unique_name = f"{uuid.uuid4().hex}{ext}"
+        filepath    = os.path.join(UPLOAD_FOLDER, unique_name)
+        file.save(filepath)
+
+        # Step 1 — Filter CNN
+        filter_score = run_filter_cnn(filepath)
+        if filter_score > 0.5:
+            return jsonify({
+                'success': False,
+                'message': 'No chicken detected. Please upload a chicken image.'
+            }), 400
+
+        # Step 2 — Disease CNN
+        predictions     = run_disease_cnn(filepath)
+        predicted_index = int(np.argmax(predictions))
+        predicted_class = CLASSES[predicted_index]
+        confidence      = float(predictions[predicted_index]) * 100
+        crd_prob        = float(predictions[0]) * 100
+        fowlpox_prob    = float(predictions[1]) * 100
+        healthy_prob    = float(predictions[2]) * 100
+
+        Detection.save_detection(
+            user_id=user['id'] if user else None,
+            username=username,
+            image_name=unique_name,
+            predicted_class=predicted_class,
+            confidence=round(confidence, 2),
+            crd_prob=round(crd_prob, 2),
+            fowlpox_prob=round(fowlpox_prob, 2),
+            healthy_prob=round(healthy_prob, 2),
+            chicken_count=1
+        )
+
+        return jsonify({
+            'success': True,
+            'predicted_class': predicted_class,
+            'confidence': round(confidence, 2),
+            'probabilities': {
+                'crd':     round(crd_prob, 2),
+                'fowlpox': round(fowlpox_prob, 2),
+                'healthy': round(healthy_prob, 2)
+            },
+            'disease_info': ADVICE[predicted_class],
+            'image_name': unique_name
+        }), 200
+
+    except Exception as exc:
+        return jsonify({'success': False,
+                        'message': f'Prediction failed: {exc}'}), 500
+
+
+@predict_bp.route('/api/history', methods=['GET'])
+def history():
+    username   = request.args.get('username', None)
+    detections = Detection.get_all_detections(username=username)
+    return jsonify({
+        'success': True,
+        'detections': [{
+            **item,
+            'detected_at': str(item['detected_at'])
+        } for item in detections]
+    }), 200
+
+
+@predict_bp.route('/api/statistics', methods=['GET'])
+def statistics():
+    stats = Detection.get_statistics()
+    total = sum(stats.values())
+    return jsonify({
+        'success': True,
+        'statistics': stats,
+        'total': total
+    }), 200
+</file>
+
+<file path="app/utils/auth.py">
+from functools import wraps
+
+from flask import g, jsonify, request
+from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
+
+from config import SECRET_KEY, TOKEN_MAX_AGE_SECONDS
+
+
+def _serializer():
+    return URLSafeTimedSerializer(SECRET_KEY, salt='poultry-disease-auth')
+
+
+def generate_auth_token(user):
+    return _serializer().dumps({
+        'user_id': user['id'],
+        'role': user['role'],
+        'username': user['username']
+    })
+
+
+def decode_auth_token(token):
+    try:
+        return _serializer().loads(token, max_age=TOKEN_MAX_AGE_SECONDS)
+    except (BadSignature, SignatureExpired):
+        return None
+
+
+def _extract_token():
+    header = request.headers.get('Authorization', '').strip()
+    if not header.startswith('Bearer '):
+        return None
+    return header.split(' ', 1)[1].strip()
+
+
+def require_auth(admin_only=False):
+    def decorator(view):
+        @wraps(view)
+        def wrapped(*args, **kwargs):
+            token = _extract_token()
+            if not token:
+                return jsonify({
+                    'success': False,
+                    'message': 'Authentication required.'
+                }), 401
+
+            payload = decode_auth_token(token)
+            if not payload or 'user_id' not in payload:
+                return jsonify({
+                    'success': False,
+                    'message': 'Invalid or expired session.'
+                }), 401
+
+            from app.models.user import User
+
+            user = User.get_user_by_id(payload['user_id'])
+            if not user:
+                return jsonify({
+                    'success': False,
+                    'message': 'User account not found.'
+                }), 401
+
+            if user['status'] != 'active':
+                return jsonify({
+                    'success': False,
+                    'message': 'Your account is inactive.'
+                }), 403
+
+            if admin_only and user['role'] != 'admin':
+                return jsonify({
+                    'success': False,
+                    'message': 'Admin access required.'
+                }), 403
+
+            g.current_user = user
+            return view(*args, **kwargs)
+
+        return wrapped
+
+    return decorator
+</file>
+
+<file path="app/utils/helpers.py">
+# app/utils/helpers.py
+# Utilities: password hashing/checking, multi-language messages
+
+from flask_bcrypt import Bcrypt
+
+MESSAGES = {
+    'register_success': {
+        'en': 'User registered successfully',
+        'rw': 'Umukoresha yanditswe neza',
+        'fr': 'Utilisateur enregistré avec succès'
+    },
+    'register_exists': {
+        'en': 'Username or email already exists',
+        'rw': 'Izina ry’umukoresha cyangwa email biriho',
+        'fr': 'Nom d’utilisateur ou email déjà utilisé'
+    },
+    'register_error': {
+        'en': 'Registration failed',
+        'rw': 'Kwiyandikisha byanze',
+        'fr': "Échec de l'inscription"
+    },
+    'login_success': {
+        'en': 'Login successful',
+        'rw': 'Kwinjira byagenze neza',
+        'fr': 'Connexion réussie'
+    },
+    'login_invalid': {
+        'en': 'Invalid username or password',
+        'rw': 'Izina ry’umukoresha cyangwa ijambo banga si byo',
+        'fr': 'Nom d’utilisateur ou mot de passe invalide'
+    },
+    'login_error': {
+        'en': 'Login failed',
+        'rw': 'Kwinjira byanze',
+        'fr': 'Échec de la connexion'
+    }
+}
+
+def get_message(key, lang='en'):
+    return MESSAGES.get(key, {}).get(lang, MESSAGES.get(key, {}).get('en', ''))
+
+def hash_password(bcrypt, password):
+    return bcrypt.generate_password_hash(password).decode('utf-8')
+
+def check_password(bcrypt, hashed, password):
+    return bcrypt.check_password_hash(hashed, password)
+</file>
+
+<file path="app/__init__.py">
+from pathlib import Path
+
+from flask import Flask, redirect, send_from_directory
+from flask_bcrypt import Bcrypt
+from flask_cors import CORS
+import psycopg2
+
+from config import DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER, SECRET_KEY
+
+bcrypt = Bcrypt()
+
+
+def get_db_connection():
+    return psycopg2.connect(
+        dbname=DB_NAME,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        host=DB_HOST,
+        port=DB_PORT
+    )
+
+
+def create_app():
+    project_frontend_dir = Path(__file__).resolve().parents[2] / 'frontend'
+    upload_dir = Path(__file__).resolve().parents[1] / 'frontend' / 'uploads'
+
+    app = Flask(
+        __name__,
+        static_folder=str(project_frontend_dir),
+        static_url_path=''
+    )
+    app.config['SECRET_KEY'] = SECRET_KEY
+
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    bcrypt.init_app(app)
+
+    from app.routes.admin import admin_bp
+    from app.routes.auth import auth_bp
+    from app.routes.predict import predict_bp
+
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(predict_bp)
+    app.register_blueprint(admin_bp)
+
+    @app.route('/')
+    def index():
+        return redirect('/dashboard.html')
+
+    @app.route('/uploads/<path:filename>')
+    def serve_upload(filename):
+        return send_from_directory(upload_dir, filename)
+
+    @app.route('/<path:path>')
+    def serve_frontend(path):
+        return send_from_directory(app.static_folder, path)
+
+    return app
+</file>
+
+<file path=".python-version">
+3.11.0
+</file>
+
+<file path="config.py">
+import os
+
+# PostgreSQL database credentials & connection
+DB_NAME = os.getenv('DB_NAME', 'chicken_db')
+DB_USER = os.getenv('DB_USER', 'chicken_user')
+DB_PASSWORD = os.getenv('DB_PASSWORD', 'Ishimwe123')
+DB_HOST = os.getenv('DB_HOST', 'localhost')
+DB_PORT = os.getenv('DB_PORT', '5432')
+
+# Application security
+SECRET_KEY = os.getenv('SECRET_KEY', 'poultry-disease-admin-secret')
+TOKEN_MAX_AGE_SECONDS = int(os.getenv('TOKEN_MAX_AGE_SECONDS', '86400'))
+
+# Default admin bootstrap
+DEFAULT_ADMIN_USERNAME = os.getenv('DEFAULT_ADMIN_USERNAME', 'admin')
+DEFAULT_ADMIN_EMAIL = os.getenv('DEFAULT_ADMIN_EMAIL', 'admin@poultry.local')
+DEFAULT_ADMIN_PASSWORD = os.getenv('DEFAULT_ADMIN_PASSWORD', 'admin123')
+</file>
+
+<file path="gunicorn.conf.py">
+# backend/gunicorn.conf.py
+timeout = 120
+workers = 1
+bind = "0.0.0.0:10000"
+</file>
+
+<file path="Procfile">
+web: gunicorn run:app
+</file>
+
+<file path="requirements.txt">
+flask
+flask-bcrypt
+flask-cors
+psycopg2-binary
+tensorflow
+numpy
+Pillow
+gdown==4.6.3
+gunicorn
+</file>
+
+<file path="run.py">
+# run.py
+from app import create_app
+from app.models.user import User
+from app.models.detection import Detection
+
+app = create_app()
+
+# ← OUTSIDE if __name__ — runs on BOTH local and Render
+try:
+    User.create_table()
+    Detection.create_table()
+    User.ensure_default_admin()
+    print("[INFO] All tables ready!")
+except Exception as exc:
+    print(f"[WARN] Skipping database initialization: {exc}")
+
+if __name__ == '__main__':
+    app.run(debug=False)
+</file>
+
+<file path="runtime.txt">
+python-3.11.0
+</file>
+
+</files>
