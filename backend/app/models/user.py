@@ -3,7 +3,7 @@ from config import DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD, DEFAULT_ADMIN_US
 
 
 class User:
-    VALID_ROLES = {'admin', 'user'}
+    VALID_ROLES = {'admin', 'user', 'vet'}
     VALID_STATUSES = {'active', 'inactive'}
 
     @staticmethod
@@ -197,6 +197,46 @@ class User:
         except Exception as exc:
             print(f"[ERROR] Failed to fetch users: {exc}")
             return []
+        finally:
+            cur.close()
+            conn.close()
+
+    @staticmethod
+    def get_users_by_role(role):
+        """Fetch all users with a specific role (e.g., 'vet')."""
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute("""
+                SELECT id, username, email, role, status, created_at
+                FROM users
+                WHERE role = %s
+                ORDER BY username ASC;
+            """, (role,))
+            rows = cur.fetchall()
+            return [{
+                'id': row[0],
+                'username': row[1],
+                'email': row[2],
+                'role': row[3],
+                'status': row[4],
+                'created_at': row[5]
+            } for row in rows]
+        except Exception as exc:
+            print(f"[ERROR] Failed to fetch users by role: {exc}")
+            return []
+        finally:
+            cur.close()
+            conn.close()
+
+    @staticmethod
+    def get_total_users_by_role(role):
+        """Count users with a specific role."""
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute("SELECT COUNT(*) FROM users WHERE role = %s;", (role,))
+            return int(cur.fetchone()[0] or 0)
         finally:
             cur.close()
             conn.close()

@@ -187,6 +187,103 @@
             .navbar, .no-print { display: none !important; }
             .container { max-width: 100% !important; }
         }
+
+        /* [VET-FEEDBACK] scoped vet review card styles */
+        .vet-review-card {
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 18px rgba(13, 43, 69, 0.10);
+            border: 1px solid #d0e6f4;
+        }
+        .vet-review-header {
+            background: linear-gradient(130deg, #0d2b45 0%, #1a5276 100%);
+            color: #fff;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .vet-review-header .vet-title {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        .vet-review-body {
+            background: #fff;
+            padding: 18px 20px;
+        }
+        .vet-pill {
+            display: inline-block;
+            border-radius: 999px;
+            padding: 4px 14px;
+            font-weight: 700;
+            font-size: .78rem;
+        }
+        .vet-pill-approved          { background: #d5f5e3; color: #1a6635; }
+        .vet-pill-pending           { background: #d6eaf8; color: #1a5276; }
+        .vet-pill-needs_more_checks { background: #fef9e7; color: #9a7d0a; border: 1px solid #f9e79f; }
+        .vet-pill-confirmed         { background: #f0e6ff; color: #6c3483; }
+        .vet-pill-risk-low          { background: #d5f5e3; color: #1a6635; }
+        .vet-pill-risk-medium       { background: #fef9e7; color: #9a7d0a; }
+        .vet-pill-risk-high         { background: #fde9e7; color: #a1262a; }
+        .vet-pill-risk-critical     { background: #2c0a0a; color: #f5b7b1; }
+        .vet-meta {
+            font-size: .82rem;
+            color: #5d85a0;
+            margin-bottom: 14px;
+        }
+        .vet-section-label {
+            font-size: .7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .07em;
+            color: #7a99b0;
+            margin-bottom: 5px;
+        }
+        .vet-section-value {
+            font-size: .92rem;
+            color: #1a2733;
+            line-height: 1.55;
+            margin-bottom: 14px;
+        }
+        .vet-flags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        .vet-flag-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #eaf4fb;
+            border: 1px solid #cce3f2;
+            border-radius: 999px;
+            padding: 4px 12px;
+            font-size: .8rem;
+            font-weight: 600;
+            color: #1a5276;
+        }
+        .vet-awaiting {
+            background: #f8fafc;
+            border: 1px dashed #b0cfe0;
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            color: #5d85a0;
+            margin-bottom: 20px;
+        }
+        .vet-awaiting i { font-size: 1.8rem; display: block; margin-bottom: 8px; opacity: .5; }
+        .ai-disclaimer {
+            background: #fffbf0;
+            border-left: 4px solid #f39c12;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: .85rem;
+            color: #856404;
+            margin-bottom: 16px;
+        }
     </style>
 </head>
 <body>
@@ -302,6 +399,9 @@
                     </div>
                     <p class="warning-text mb-0" id="warningText"></p>
                 </div>
+
+                <!-- [VET-FEEDBACK] Vet review card — rendered above AI treatment -->
+                <div id="vetReviewCard"></div>
 
                 <!-- Treatment / Care -->
                 <div id="treatmentContainer"></div>
@@ -502,6 +602,160 @@
         });
 
         container.innerHTML = html;
+
+        // [VET-FEEDBACK] fetch and render the vet review for this detection
+        const detectionId = result.detection_id || null;
+        renderVetReview(detectionId, result.image_name);
+    }
+
+    // ================================================
+    // [VET-FEEDBACK] RENDER VET REVIEW CARD
+    // ================================================
+    async function renderVetReview(detectionId, imageName) {
+        const card = document.getElementById('vetReviewCard');
+        if (!card) return;
+
+        // Show a loading state
+        card.innerHTML = `<div class="vet-awaiting">
+            <i class="fas fa-spinner fa-spin"></i>
+            Checking for veterinary review…
+        </div>`;
+
+        const username = localStorage.getItem('loggedInUser') || 'guest';
+
+        let detections = [];
+        try {
+            const res = await fetch(
+                `/api/history?username=${encodeURIComponent(username)}`
+            );
+            const data = await res.json();
+            if (data.success) detections = data.detections;
+        } catch (e) {
+            card.innerHTML = '';
+            return;
+        }
+
+        // Prefer matching by detection_id; fall back to image_name for old localStorage data
+        let row = null;
+        if (detectionId) {
+            row = detections.find(d => d.id === parseInt(detectionId, 10));
+        }
+        if (!row && imageName) {
+            row = detections.find(d => d.image_name === imageName);
+        }
+
+        // No matching row or no review yet
+        if (!row || !row.vet_status) {
+            card.innerHTML = `
+                <div class="vet-awaiting">
+                    <i class="fas fa-hourglass-half"></i>
+                    <strong>⏳ Awaiting veterinary review.</strong><br>
+                    <span>A vet will confirm this diagnosis shortly.</span>
+                </div>`;
+            return;
+        }
+
+        // Helper: relative time
+        function relativeTime(dateStr) {
+            if (!dateStr) return '';
+            const diff = Date.now() - new Date(dateStr).getTime();
+            const mins  = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days  = Math.floor(diff / 86400000);
+            if (mins < 2)   return 'just now';
+            if (mins < 60)  return `${mins} minutes ago`;
+            if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            return `${days} day${days > 1 ? 's' : ''} ago`;
+        }
+
+        // Status and risk display maps
+        const statusLabel = {
+            pending:          '⏳ Pending',
+            approved:         '✅ Approved',
+            needs_more_checks:'🔍 Needs More Checks',
+            confirmed:        '🔬 Confirmed'
+        };
+
+        const riskLabel = {
+            low:      '🟢 Low',
+            medium:   '🟡 Medium',
+            high:     '🔴 High',
+            critical: '⛔ Critical'
+        };
+
+        // Flags (only show true ones)
+        let flagsHtml = '';
+        if (row.vet_needs_lab_test) {
+            flagsHtml += `<span class="vet-flag-chip">🧪 Lab Test Requested</span>`;
+        }
+        if (row.vet_needs_farm_visit) {
+            flagsHtml += `<span class="vet-flag-chip">🚗 Farm Visit Requested</span>`;
+        }
+        if (row.vet_needs_medication_change) {
+            flagsHtml += `<span class="vet-flag-chip">💊 Medication Change Advised</span>`;
+        }
+        const flagsSection = flagsHtml
+            ? `<div class="vet-section-label">Recommended Actions</div>
+               <div class="vet-flags mb-2">${flagsHtml}</div>`
+            : '';
+
+        const notesSection = row.vet_notes
+            ? `<div class="vet-section-label">Diagnosis Notes</div>
+               <div class="vet-section-value">${escapeHtml(row.vet_notes)}</div>`
+            : '';
+
+        const actionSection = row.vet_action
+            ? `<div class="vet-section-label">Recommended Action</div>
+               <div class="vet-section-value">${escapeHtml(row.vet_action)}</div>`
+            : '';
+
+        const statusPillClass = `vet-pill vet-pill-${row.vet_status}`;
+        const riskPillClass   = `vet-pill vet-pill-risk-${row.vet_risk_level || 'medium'}`;
+
+        card.innerHTML = `
+            <div class="vet-review-card">
+                <div class="vet-review-header">
+                    <span class="vet-title">🩺 Veterinary Review</span>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <span class="${statusPillClass}">
+                            ${statusLabel[row.vet_status] || row.vet_status}
+                        </span>
+                        <span class="${riskPillClass}">
+                            ${riskLabel[row.vet_risk_level] || row.vet_risk_level || 'Medium'} Risk
+                        </span>
+                    </div>
+                </div>
+                <div class="vet-review-body">
+                    <div class="vet-meta">
+                        <i class="fas fa-user-md me-1"></i>
+                        Reviewed by <strong>${escapeHtml(row.vet_username || 'Veterinarian')}</strong>
+                        &nbsp;·&nbsp;
+                        <i class="fas fa-clock me-1"></i>
+                        ${relativeTime(row.vet_reviewed_at)}
+                    </div>
+                    ${notesSection}
+                    ${actionSection}
+                    ${flagsSection}
+                </div>
+            </div>`;
+
+        // Show disclaimer above AI treatment block when vet review is present
+        const treatmentContainer = document.getElementById('treatmentContainer');
+        if (treatmentContainer) {
+            const disclaimer = document.createElement('div');
+            disclaimer.className = 'ai-disclaimer no-print';
+            disclaimer.innerHTML = `<i class="fas fa-info-circle me-1"></i>
+                The AI advice below is a suggestion only. Follow the vet's recommendation above.`;
+            treatmentContainer.insertAdjacentElement('beforebegin', disclaimer);
+        }
+    }
+
+    // Local escapeHtml for vet card (result.html has no shared helper)
+    function escapeHtml(v) {
+        return String(v || '')
+            .replaceAll('&', '&amp;').replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;').replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
     }
 
     // ================================================

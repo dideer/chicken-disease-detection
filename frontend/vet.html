@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<!-- [VET-FEATURE] new file — veterinarian dashboard -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vet Dashboard — Poultry Disease Detection</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <style>
+        /* =============================================
+           VET DASHBOARD — scoped styles (vet.html only)
+        ============================================= */
+        :root {
+            --vet-900: #071e30;
+            --vet-800: #0d2b45;
+            --vet-700: #14406a;
+            --vet-600: #1a5276;
+            --vet-500: #2471a3;
+            --vet-400: #2e86c1;
+            --vet-100: #d6eaf8;
+            --vet-50:  #eaf4fb;
+            --ink:     #1a2733;
+            --muted:   #6d8fa8;
+            --line:    #dde8f0;
+            --sidebar-w: 260px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            background: #f0f5fa;
+            color: var(--ink);
+            min-height: 100vh;
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        }
+
+        /* ── SIDEBAR ─────────────────────────── */
+        .sidebar {
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            width: var(--sidebar-w);
+            background: linear-gradient(180deg, var(--vet-900) 0%, var(--vet-700) 100%);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            z-index: 1040;
+            transition: transform .25s ease;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 24px 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+
+        .brand-icon {
+            width: 46px; height: 46px;
+            border-radius: 14px;
+            background: rgba(255,255,255,.13);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .brand-name { font-weight: 800; font-size: 1rem; line-height: 1.2; }
+        .brand-sub  { font-size: .7rem; opacity: .55; text-transform: uppercase; letter-spacing: .1em; }
+
+        .sidebar-nav {
+            padding: 18px 14px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .nav-label {
+            font-size: .67rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            opacity: .45;
+            padding: 0 12px;
+            margin: 12px 0 6px;
+        }
+
+        .side-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 11px 14px;
+            margin-bottom: 3px;
+            border: 0;
+            border-radius: 12px;
+            background: transparent;
+            color: rgba(255,255,255,.75);
+            font-weight: 600;
+            font-size: .9rem;
+            text-align: left;
+            text-decoration: none;
+            transition: background .15s, color .15s;
+            cursor: pointer;
+        }
+
+        .side-link i { font-size: 1rem; width: 20px; text-align: center; flex-shrink: 0; }
+        .side-link:hover { background: rgba(255,255,255,.09); color: #fff; }
+
+        .side-link.active {
+            background: #fff;
+            color: var(--vet-800);
+            box-shadow: 0 6px 18px rgba(0,0,0,.18);
+        }
+
+        .sidebar-footer {
+            padding: 16px 18px;
+            border-top: 1px solid rgba(255,255,255,.08);
+        }
+
+        .vet-chip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .vet-chip .avatar {
+            width: 40px; height: 40px;
+            border-radius: 12px;
+            background: rgba(255,255,255,.15);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .vet-chip .role-label { font-size: .7rem; opacity: .6; }
+
+        /* ── MAIN AREA ────────────────────────── */
+        .main-area {
+            margin-left: var(--sidebar-w);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── TOPBAR ───────────────────────────── */
+        .topbar {
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+        }
+
+        .topbar .page-title { font-weight: 800; font-size: 1.15rem; margin: 0; }
+        .topbar .page-sub   { font-size: .8rem; color: var(--muted); }
+
+        .content { padding: 28px; }
+
+        /* ── HERO BANNER ─────────────────────── */
+        .hero-banner {
+            background: linear-gradient(130deg, var(--vet-900) 0%, var(--vet-600) 60%, #1f618d 100%);
+            border-radius: 22px;
+            color: #fff;
+            padding: 30px 36px;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            right: -40px; top: -40px;
+            width: 260px; height: 260px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.05);
+        }
+
+        .hero-banner::after {
+            content: '';
+            position: absolute;
+            right: 80px; bottom: -60px;
+            width: 180px; height: 180px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.04);
+        }
+
+        .hero-banner h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 4px; }
+        .hero-banner p  { opacity: .78; margin: 0; font-size: .92rem; }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,.15);
+            border: 1px solid rgba(255,255,255,.2);
+            border-radius: 999px;
+            padding: 6px 16px;
+            font-size: .82rem;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+        }
+
+        /* ── METRIC CARDS ─────────────────────── */
+        .metric-row { display: grid; gap: 18px; grid-template-columns: repeat(5, 1fr); margin-bottom: 28px; }
+
+        @media (max-width: 1199px) { .metric-row { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 767px)  { .metric-row { grid-template-columns: repeat(2, 1fr); } }
+
+        .metric-card {
+            border-radius: 20px;
+            padding: 22px 20px;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            transition: transform .18s, box-shadow .18s;
+            box-shadow: 0 8px 24px rgba(0,0,0,.12);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 36px rgba(0,0,0,.18);
+        }
+
+        .metric-card::after {
+            content: '';
+            position: absolute;
+            right: -20px; bottom: -20px;
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.08);
+        }
+
+        .mc-total     { background: linear-gradient(135deg, #0d2b45, #1a5276); }
+        .mc-checks    { background: linear-gradient(135deg, #7d3c00, #d4661a); }
+        .mc-confirmed { background: linear-gradient(135deg, #145a32, #229954); }
+        .mc-lab       { background: linear-gradient(135deg, #512e8a, #8e44ad); }
+        .mc-farm      { background: linear-gradient(135deg, #0e6655, #17a589); }
+
+        .mc-icon {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            background: rgba(255,255,255,.18);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 14px;
+        }
+
+        .mc-value { font-size: 2.2rem; font-weight: 800; line-height: 1; }
+        .mc-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .07em; opacity: .8; margin-top: 6px; }
+
+        /* ── PANEL / TABLE ────────────────────── */
+        .panel {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            box-shadow: 0 8px 26px rgba(13,43,69,.05);
+        }
+
+        .table thead th {
+            background: var(--vet-50);
+            color: var(--vet-600);
+            font-size: .72rem;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .table td { vertical-align: middle; }
+
+        .thumb {
+            width: 54px; height: 54px;
+            border-radius: 14px;
+            object-fit: cover;
+            border: 2px solid rgba(13,43,69,.08);
+            transition: transform .15s;
+            cursor: pointer;
+        }
+        .thumb:hover { transform: scale(1.08); }
+
+        /* ── PILL BADGES ──────────────────────── */
+        .pill-badge { border-radius: 999px; padding: .38rem .78rem; font-weight: 700; font-size: .76rem; display: inline-flex; align-items: center; gap: 5px; }
+
+        .result-crd        { background: #fde9e7; color: #a1262a; }
+        .result-fowlpox    { background: #fff0d8; color: #9f6513; }
+        .result-healthy    { background: #e2f5e8; color: #1d7b46; }
+        .result-chicken    { background: #d6eaf8; color: #1a5276; }
+        .result-no_chicken { background: #ececec; color: #505050; }
+
+        .status-pending           { background: #d6eaf8; color: #1a5276; }
+        .status-approved          { background: #d5f5e3; color: #1e8449; }
+        .status-needs_more_checks { background: #fef9e7; color: #9a7d0a; border: 1px solid #f9e79f; }
+        .status-confirmed         { background: #f3e6ff; color: #7d3c98; }
+
+        .risk-low      { background: #d5f5e3; color: #1a6635; }
+        .risk-medium   { background: #fef9e7; color: #9a7d0a; }
+        .risk-high     { background: #fde9e7; color: #a1262a; }
+        .risk-critical { background: #2c0a0a; color: #f5b7b1; font-weight: 800; }
+
+        /* DataTables overrides */
+        div.dataTables_wrapper div.dataTables_filter,
+        div.dataTables_wrapper div.dataTables_length { margin-bottom: 1rem; }
+
+        div.dataTables_wrapper div.dataTables_filter input,
+        div.dataTables_wrapper div.dataTables_length select {
+            border-radius: 10px;
+            border: 1px solid var(--line);
+        }
+
+        .dataTables_wrapper .pagination .page-link {
+            border-radius: 999px !important;
+            margin: 0 2px;
+            color: var(--vet-600);
+        }
+
+        .dataTables_wrapper .pagination .page-item.active .page-link {
+            background: var(--vet-600);
+            border-color: var(--vet-600);
+            color: #fff;
+        }
+
+        /* ── REVIEW BUTTON ────────────────────── */
+        .btn-review {
+            background: linear-gradient(135deg, var(--vet-700), var(--vet-500));
+            color: #fff;
+            border: 0;
+            border-radius: 999px;
+            padding: 6px 16px;
+            font-size: .82rem;
+            font-weight: 600;
+            transition: opacity .15s, transform .12s;
+        }
+        .btn-review:hover { opacity: .88; transform: scale(1.04); color: #fff; }
+
+        /* ── MODAL ────────────────────────────── */
+        .modal-content { border: 0; border-radius: 22px; overflow: hidden; }
+
+        .modal-vet-header {
+            background: linear-gradient(130deg, var(--vet-900) 0%, var(--vet-600) 100%);
+            padding: 22px 26px;
+            color: #fff;
+        }
+
+        .modal-vet-header .btn-close {
+            filter: invert(1);
+            opacity: .7;
+        }
+
+        .ai-summary-bar {
+            background: var(--vet-50);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 24px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .ai-summary-bar .ai-item { font-size: .85rem; }
+        .ai-summary-bar .ai-label { color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; }
+
+        .form-select, .form-control {
+            border-radius: 12px;
+            border-color: var(--line);
+        }
+        .form-select:focus, .form-control:focus {
+            border-color: var(--vet-400);
+            box-shadow: 0 0 0 .2rem rgba(36,113,163,.18);
+        }
+
+        .checkbox-card {
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: border-color .15s, background .15s;
+            cursor: pointer;
+        }
+        .checkbox-card:hover { border-color: var(--vet-400); background: var(--vet-50); }
+        .checkbox-card input:checked ~ .chk-text { color: var(--vet-700); font-weight: 600; }
+        .checkbox-card .chk-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .chk-icon-lab  { background: #ede7f6; color: #7b1fa2; }
+        .chk-icon-farm { background: #e0f2f1; color: #00695c; }
+        .chk-icon-med  { background: #fce4ec; color: #c62828; }
+
+        .section-label {
+            font-size: .7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+
+        /* ── EMPTY STATE ──────────────────────── */
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--muted);
+        }
+        .empty-state i { font-size: 2.5rem; opacity: .35; display: block; margin-bottom: 12px; }
+
+        /* ── SIDEBAR RESPONSIVE ───────────────── */
+        .sidebar-toggle { display: none; }
+
+        @media (max-width: 991.98px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-area { margin-left: 0; }
+            .sidebar-toggle { display: inline-flex; }
+            .sidebar-backdrop {
+                display: none;
+                position: fixed; inset: 0;
+                background: rgba(0,0,0,.4);
+                z-index: 1035;
+            }
+            .sidebar-backdrop.show { display: block; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .metric-card, .metric-card:hover,
+            .btn-review, .btn-review:hover { transform: none; transition: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══════════════ SIDEBAR BACKDROP ══════════════ -->
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+<!-- ══════════════ SIDEBAR ══════════════ -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <span class="brand-icon"><i class="fas fa-stethoscope"></i></span>
+        <div>
+            <div class="brand-name">Vet Console</div>
+            <div class="brand-sub">Poultry Disease</div>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="nav-label">Menu</div>
+        <button class="side-link active" id="navDashboard" onclick="showView('dashboard')">
+            <i class="fas fa-th-large"></i> Dashboard
+        </button>
+        <button class="side-link" id="navQueue" onclick="showView('queue')">
+            <i class="fas fa-list-alt"></i> Review Queue
+        </button>
+
+        <div class="nav-label" style="margin-top:18px;">Info</div>
+        <span class="side-link" style="cursor:default; opacity:.5; font-size:.8rem;">
+            <i class="fas fa-clock"></i> <span id="sidebarTime">—</span>
+        </span>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="vet-chip">
+            <span class="avatar" id="vetAvatar">V</span>
+            <div>
+                <div class="fw-semibold" id="vetNameSide">Veterinarian</div>
+                <div class="role-label">Vet · Active</div>
+            </div>
+        </div>
+        <button class="btn btn-warning btn-sm w-100 rounded-pill text-dark fw-semibold" onclick="logout()">
+            <i class="fas fa-sign-out-alt me-1"></i> Logout
+        </button>
+    </div>
+</aside>
+
+<!-- ══════════════ MAIN AREA ══════════════ -->
+<div class="main-area">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-outline-secondary btn-sm sidebar-toggle rounded-3" onclick="openSidebar()">
+                <i class="fas fa-bars fs-5"></i>
+            </button>
+            <div>
+                <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                <div class="page-sub" id="pageSub">Your veterinary overview</div>
+            </div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge rounded-pill px-3 py-2" style="background:var(--vet-100); color:var(--vet-700); font-size:.8rem;">
+                <i class="fas fa-user-md me-1"></i>
+                <span id="vetNameTop">Vet</span>
+            </span>
+            <button class="btn btn-outline-secondary btn-sm rounded-pill" onclick="refreshCurrent()">
+                <i class="fas fa-sync-alt me-1"></i> Refresh
+            </button>
+        </div>
+    </header>
+
+    <main class="content">
+
+        <!-- ══ DASHBOARD VIEW ══ -->
+        <div id="view-dashboard">
+
+            <!-- Hero banner -->
+            <div class="hero-banner mb-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                    <div>
+                        <div class="hero-badge mb-3">
+                            <i class="fas fa-stethoscope"></i> Veterinary Portal
+                        </div>
+                        <h2>Welcome back, <span id="heroName">Doctor</span>!</h2>
+                        <p>Review AI-generated poultry disease detections and record your clinical assessment.</p>
+                    </div>
+                    <div class="text-center" style="z-index:1; position:relative;">
+                        <div style="font-size:4rem; opacity:.7;"><i class="fas fa-microscope"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metric cards -->
+            <div class="metric-row">
+                <div class="metric-card mc-total">
+                    <div class="mc-icon"><i class="fas fa-clipboard-check"></i></div>
+                    <div class="mc-value" id="cardTotal">0</div>
+                    <div class="mc-label">Total Reviews</div>
+                </div>
+                <div class="metric-card mc-checks">
+                    <div class="mc-icon"><i class="fas fa-search"></i></div>
+                    <div class="mc-value" id="cardChecks">0</div>
+                    <div class="mc-label">Needs More Checks</div>
+                </div>
+                <div class="metric-card mc-confirmed">
+                    <div class="mc-icon"><i class="fas fa-check-double"></i></div>
+                    <div class="mc-value" id="cardConfirmed">0</div>
+                    <div class="mc-label">Confirmed</div>
+                </div>
+                <div class="metric-card mc-lab">
+                    <div class="mc-icon"><i class="fas fa-flask"></i></div>
+                    <div class="mc-value" id="cardLab">0</div>
+                    <div class="mc-label">Lab Tests</div>
+                </div>
+                <div class="metric-card mc-farm">
+                    <div class="mc-icon"><i class="fas fa-tractor"></i></div>
+                    <div class="mc-value" id="cardFarm">0</div>
+                    <div class="mc-label">Farm Visits</div>
+                </div>
+            </div>
+
+            <!-- Quick action card -->
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="panel p-4 h-100">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <span class="mc-icon mc-total" style="border-radius:14px; width:48px; height:48px; display:inline-flex; align-items:center; justify-content:center; font-size:1.2rem;">
+                                <i class="fas fa-list-alt"></i>
+                            </span>
+                            <h2 class="h5 fw-bold mb-0">Review Queue</h2>
+                        </div>
+                        <p class="text-muted mb-3">Open the full detection list and submit your veterinary assessments.</p>
+                        <button class="btn btn-review px-4" onclick="showView('queue')">
+                            <i class="fas fa-arrow-right me-2"></i> Open Queue
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="panel p-4 h-100">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <span class="mc-icon mc-checks" style="border-radius:14px; width:48px; height:48px; display:inline-flex; align-items:center; justify-content:center; font-size:1.2rem;">
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                            <h2 class="h5 fw-bold mb-0">Review Statuses</h2>
+                        </div>
+                        <p class="text-muted mb-0">
+                            <span class="pill-badge status-pending me-1">Pending</span>
+                            awaiting review &nbsp;·&nbsp;
+                            <span class="pill-badge status-approved me-1">Approved</span>
+                            AI result confirmed &nbsp;·&nbsp;
+                            <span class="pill-badge status-needs_more_checks me-1">Needs More Checks</span>
+                            further inspection &nbsp;·&nbsp;
+                            <span class="pill-badge status-confirmed">Confirmed</span>
+                            final diagnosis
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ QUEUE VIEW ══ -->
+        <div id="view-queue" style="display:none;">
+            <div class="panel p-4">
+                <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+                    <div>
+                        <h2 class="h4 fw-bold mb-1">Detection Review Queue</h2>
+                        <p class="text-muted mb-0">Review AI detections and record your veterinary assessment.</p>
+                    </div>
+                    <button class="btn btn-outline-secondary rounded-pill btn-sm px-4" onclick="loadQueue()">
+                        <i class="fas fa-sync-alt me-1"></i> Refresh
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table align-middle" id="vetTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Image</th>
+                                <th>AI Result</th>
+                                <th>Confidence</th>
+                                <th>Farmer</th>
+                                <th>Detected At</th>
+                                <th>Vet Status</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vetTableBody">
+                            <tr>
+                                <td colspan="8" class="empty-state">
+                                    <i class="fas fa-hourglass-half"></i>
+                                    Loading queue…
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div><!-- /.main-area -->
+
+
+<!-- ══════════════ REVIEW MODAL ══════════════ -->
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <!-- Coloured header -->
+            <div class="modal-vet-header d-flex justify-content-between align-items-start">
+                <div>
+                    <div style="font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; opacity:.6;" class="mb-1">
+                        <i class="fas fa-stethoscope me-1"></i> Veterinary Review
+                    </div>
+                    <h3 class="h5 fw-bold mb-0" id="reviewModalSub">Detection #—</h3>
+                </div>
+                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-4">
+
+                <!-- Image + AI summary -->
+                <div class="row g-3 mb-3 align-items-center">
+                    <div class="col-auto">
+                        <img id="reviewImage"
+                             style="width:110px; height:110px; border-radius:18px; object-fit:cover; border:3px solid var(--line);"
+                             alt="Detection image"
+                             onerror="this.src='https://via.placeholder.com/110x110?text=IMG'">
+                    </div>
+                    <div class="col">
+                        <div class="ai-summary-bar">
+                            <div>
+                                <div class="ai-label">AI Result</div>
+                                <div class="ai-item fw-bold" id="aiResultText">—</div>
+                            </div>
+                            <div>
+                                <div class="ai-label">Confidence</div>
+                                <div class="ai-item fw-bold" id="aiConfText">—</div>
+                            </div>
+                            <div>
+                                <div class="ai-label">Farmer</div>
+                                <div class="ai-item fw-bold" id="aiFarmerText">—</div>
+                            </div>
+                            <div>
+                                <div class="ai-label">Detected</div>
+                                <div class="ai-item fw-bold" id="aiDateText">—</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="reviewDetectionId">
+
+                <!-- Status + Risk -->
+                <div class="section-label">Assessment</div>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Review Status</label>
+                        <select id="reviewStatus" class="form-select">
+                            <option value="pending">⏳ Pending</option>
+                            <option value="approved">✅ Approved — AI result is correct</option>
+                            <option value="needs_more_checks">🔍 Needs More Checks</option>
+                            <option value="confirmed">🔬 Confirmed — Final diagnosis</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Risk Level</label>
+                        <select id="reviewRisk" class="form-select">
+                            <option value="low">🟢 Low</option>
+                            <option value="medium">🟡 Medium</option>
+                            <option value="high">🔴 High</option>
+                            <option value="critical">⛔ Critical</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Recommended action checkboxes -->
+                <div class="section-label">Recommended Actions</div>
+                <div class="row g-2 mb-4">
+                    <div class="col-md-4">
+                        <label class="checkbox-card w-100">
+                            <input class="form-check-input" type="checkbox" id="chkLab">
+                            <span class="chk-icon chk-icon-lab"><i class="fas fa-flask"></i></span>
+                            <span class="chk-text">Lab Test</span>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="checkbox-card w-100">
+                            <input class="form-check-input" type="checkbox" id="chkFarm">
+                            <span class="chk-icon chk-icon-farm"><i class="fas fa-tractor"></i></span>
+                            <span class="chk-text">Farm Visit</span>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="checkbox-card w-100">
+                            <input class="form-check-input" type="checkbox" id="chkMed">
+                            <span class="chk-icon chk-icon-med"><i class="fas fa-pills"></i></span>
+                            <span class="chk-text">Medication Change</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Notes + Action -->
+                <div class="section-label">Clinical Notes</div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Diagnosis Notes</label>
+                    <textarea id="reviewNotes" class="form-control" rows="3"
+                              placeholder="Enter your clinical observations, symptoms observed, and findings…"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Recommended Action</label>
+                    <textarea id="reviewAction" class="form-control" rows="2"
+                              placeholder="Describe the recommended course of action for the farmer…"></textarea>
+                </div>
+
+                <div id="reviewAlert" class="alert alert-danger d-none mb-0 rounded-3"></div>
+            </div>
+
+            <div class="modal-footer border-0 px-4 pb-4 gap-2">
+                <button class="btn btn-outline-secondary rounded-pill px-4" type="button" data-bs-dismiss="modal">
+                    Cancel
+                </button>
+                <button class="btn btn-review px-5" type="button" onclick="submitReview()">
+                    <i class="fas fa-save me-1"></i> Save Review
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════ SCRIPTS ══════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+<script src="main.js"></script>
+
+<script>
+    // ────────────────────────────────────────────────
+    // LOCAL HELPERS  (local copies — main.js unchanged)
+    // ────────────────────────────────────────────────
+    function escapeHtml(v) {
+        return String(v || '')
+            .replaceAll('&','&amp;').replaceAll('<','&lt;')
+            .replaceAll('>','&gt;').replaceAll('"','&quot;')
+            .replaceAll("'", '&#39;');
+    }
+    function escapeJs(v) {
+        return String(v || '').replaceAll('\\','\\\\').replaceAll("'","\\'");
+    }
+    function capitalize(v) {
+        if (!v) return '';
+        return v.charAt(0).toUpperCase() + v.slice(1);
+    }
+    function formatDateTime(v) {
+        if (!v) return '—';
+        const d = new Date(v);
+        return `${d.toLocaleDateString()} ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    }
+    function getInitials(name) {
+        return (name || 'V').split(/\s+/).map(p => p[0]).join('').slice(0, 2).toUpperCase();
+    }
+
+    // ────────────────────────────────────────────────
+    // STATE
+    // ────────────────────────────────────────────────
+    let reviewModal;
+    let vetDataTable;
+    let queueData   = [];
+    let queueLoaded = false;
+    let currentView = 'dashboard';
+
+    // ────────────────────────────────────────────────
+    // SIDEBAR / VIEW SWITCHING
+    // ────────────────────────────────────────────────
+    const viewMeta = {
+        dashboard: { title: 'Dashboard',      sub: 'Your veterinary overview' },
+        queue:     { title: 'Review Queue',   sub: 'All detections pending your review' }
+    };
+
+    function showView(view) {
+        currentView = view;
+        document.getElementById('view-dashboard').style.display = view === 'dashboard' ? '' : 'none';
+        document.getElementById('view-queue').style.display     = view === 'queue'     ? '' : 'none';
+        document.getElementById('pageTitle').textContent = viewMeta[view].title;
+        document.getElementById('pageSub').textContent   = viewMeta[view].sub;
+        document.querySelectorAll('.side-link[id^="nav"]').forEach(el => el.classList.remove('active'));
+        const btn = document.getElementById(view === 'dashboard' ? 'navDashboard' : 'navQueue');
+        if (btn) btn.classList.add('active');
+        closeSidebar();
+        if (view === 'queue' && !queueLoaded) loadQueue();
+    }
+
+    function refreshCurrent() {
+        loadSummary();
+        if (currentView === 'queue') loadQueue();
+    }
+
+    function openSidebar()  { document.getElementById('sidebar').classList.add('open');  document.getElementById('sidebarBackdrop').classList.add('show'); }
+    function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarBackdrop').classList.remove('show'); }
+
+    // Sidebar clock
+    function updateClock() {
+        const el = document.getElementById('sidebarTime');
+        if (el) el.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // ────────────────────────────────────────────────
+    // SESSION GUARD
+    // ────────────────────────────────────────────────
+    async function ensureVetSession() {
+        if (!localStorage.getItem('authToken')) { window.location.href = 'login.html'; return null; }
+        let me;
+        try { me = await apiFetch('/api/me'); } catch (e) { logout(); return null; }
+        if (!me.success || !me.user || !['vet', 'admin'].includes(me.user.role)) { logout(); return null; }
+        localStorage.setItem('currentUser', JSON.stringify(me.user));
+        const name = me.user.username;
+        document.getElementById('vetNameTop').textContent  = name;
+        document.getElementById('vetNameSide').textContent = name;
+        document.getElementById('vetAvatar').textContent   = getInitials(name);
+        document.getElementById('heroName').textContent    = name;
+        return me.user;
+    }
+
+    // ────────────────────────────────────────────────
+    // SUMMARY CARDS
+    // ────────────────────────────────────────────────
+    async function loadSummary() {
+        try {
+            const res = await apiFetch('/api/vet/summary');
+            if (!res.success) return;
+            const s = res.summary || {};
+            document.getElementById('cardTotal').textContent     = s.total_reviews         || 0;
+            document.getElementById('cardChecks').textContent    = s.needs_more_checks     || 0;
+            document.getElementById('cardConfirmed').textContent = s.confirmed             || 0;
+            document.getElementById('cardLab').textContent       = s.lab_tests_requested   || 0;
+            document.getElementById('cardFarm').textContent      = s.farm_visits_requested || 0;
+        } catch (e) { console.error('Summary load failed', e); }
+    }
+
+    // ────────────────────────────────────────────────
+    // QUEUE TABLE
+    // ────────────────────────────────────────────────
+    async function loadQueue() {
+        queueLoaded = true;
+        const tbody = document.getElementById('vetTableBody');
+        tbody.innerHTML = `<tr><td colspan="8" class="empty-state">
+            <i class="fas fa-hourglass-half"></i> Loading queue…</td></tr>`;
+
+        let res;
+        try { res = await apiFetch('/api/vet/queue'); }
+        catch (e) {
+            tbody.innerHTML = `<tr><td colspan="8" class="empty-state text-danger">
+                <i class="fas fa-exclamation-circle"></i> Failed to load queue.</td></tr>`;
+            return;
+        }
+
+        if (!res.success || !res.detections || !res.detections.length) {
+            tbody.innerHTML = `<tr><td colspan="8" class="empty-state">
+                <i class="fas fa-inbox"></i> No detection records found.</td></tr>`;
+            refreshTable();
+            return;
+        }
+
+        queueData = res.detections;
+
+        tbody.innerHTML = queueData.map((d, idx) => {
+            const lr = d.latest_review;
+            const statusBadge = lr
+                ? `<span class="pill-badge status-${escapeHtml(lr.status)}">
+                       ${statusIcon(lr.status)} ${formatStatus(lr.status)}
+                   </span>`
+                : `<span class="pill-badge status-pending">⏳ Pending</span>`;
+            const riskBadge = lr && lr.risk_level
+                ? `<span class="pill-badge risk-${escapeHtml(lr.risk_level)} ms-1">${capitalize(lr.risk_level)}</span>`
+                : '';
+
+            return `
+            <tr>
+                <td class="fw-semibold text-muted">#${d.id}</td>
+                <td>
+                    <img src="${escapeHtml(d.image_url)}" class="thumb"
+                         alt="Detection" title="Click to preview"
+                         onclick="previewImage('${escapeJs(d.image_url)}')"
+                         onerror="this.src='https://via.placeholder.com/54x54?text=IMG'">
+                </td>
+                <td><span class="pill-badge ${resultClass(d.predicted_class)}">${formatResult(d.predicted_class)}</span></td>
+                <td>
+                    <div class="fw-semibold">${Number(d.confidence || 0).toFixed(1)}%</div>
+                    <div class="small text-muted" style="font-size:.72rem;">confidence</div>
+                </td>
+                <td>
+                    <div class="fw-semibold">${escapeHtml(d.username || 'Unknown')}</div>
+                    <div class="small text-muted" style="font-size:.72rem;">${escapeHtml(d.email || '')}</div>
+                </td>
+                <td class="text-muted small">${formatDateTime(d.detected_at)}</td>
+                <td>${statusBadge}${riskBadge}</td>
+                <td class="text-end">
+                    <button class="btn btn-review btn-sm" onclick="openReview(${idx})">
+                        <i class="fas fa-pen me-1"></i> Review
+                    </button>
+                </td>
+            </tr>`;
+        }).join('');
+
+        refreshTable();
+    }
+
+    function refreshTable() {
+        if (vetDataTable) { vetDataTable.destroy(); vetDataTable = null; }
+        vetDataTable = $('#vetTable').DataTable({
+            responsive: true,
+            pageLength: 10,
+            lengthMenu: [10, 25, 50],
+            // sort by Detected At (col 5) newest first
+            order: [[5, 'desc']],
+            columnDefs: [{ orderable: false, targets: [1, 7] }]
+        });
+    }
+
+    // quick image preview (reuses review modal image slot temporarily)
+    function previewImage(url) {
+        const w = window.open('', '_blank', 'width=600,height=500,scrollbars=no');
+        w.document.write(`<body style="margin:0;background:#000;display:flex;align-items:center;justify-content:center;height:100vh;">
+            <img src="${escapeHtml(url)}" style="max-width:100%;max-height:100%;border-radius:8px;"></body>`);
+    }
+
+    // ────────────────────────────────────────────────
+    // REVIEW MODAL — OPEN
+    // ────────────────────────────────────────────────
+    function openReview(rowIdx) {
+        const d = queueData[rowIdx];
+        if (!d) return;
+
+        document.getElementById('reviewDetectionId').value = d.id;
+        document.getElementById('reviewModalSub').textContent = `Detection #${d.id} — ${formatDateTime(d.detected_at)}`;
+        document.getElementById('reviewImage').src = d.image_url || 'https://via.placeholder.com/110x110?text=IMG';
+        document.getElementById('aiResultText').innerHTML  = `<span class="pill-badge ${resultClass(d.predicted_class)}">${formatResult(d.predicted_class)}</span>`;
+        document.getElementById('aiConfText').textContent  = `${Number(d.confidence || 0).toFixed(2)}%`;
+        document.getElementById('aiFarmerText').textContent= d.username || 'Unknown';
+        document.getElementById('aiDateText').textContent  = formatDateTime(d.detected_at);
+
+        const lr = d.latest_review;
+        document.getElementById('reviewStatus').value = lr ? lr.status     : 'pending';
+        document.getElementById('reviewRisk').value   = lr ? lr.risk_level : 'medium';
+        document.getElementById('chkLab').checked     = lr ? lr.needs_lab_test         : false;
+        document.getElementById('chkFarm').checked    = lr ? lr.needs_farm_visit        : false;
+        document.getElementById('chkMed').checked     = lr ? lr.needs_medication_change : false;
+        document.getElementById('reviewNotes').value  = lr ? (lr.diagnosis_notes    || '') : '';
+        document.getElementById('reviewAction').value = lr ? (lr.recommended_action || '') : '';
+        document.getElementById('reviewAlert').classList.add('d-none');
+
+        reviewModal.show();
+    }
+
+    // ────────────────────────────────────────────────
+    // REVIEW MODAL — SUBMIT
+    // ────────────────────────────────────────────────
+    async function submitReview() {
+        const detectionId = document.getElementById('reviewDetectionId').value;
+        const payload = {
+            detection_id:            parseInt(detectionId, 10),
+            status:                  document.getElementById('reviewStatus').value,
+            risk_level:              document.getElementById('reviewRisk').value,
+            needs_lab_test:          document.getElementById('chkLab').checked,
+            needs_farm_visit:        document.getElementById('chkFarm').checked,
+            needs_medication_change: document.getElementById('chkMed').checked,
+            diagnosis_notes:         document.getElementById('reviewNotes').value.trim(),
+            recommended_action:      document.getElementById('reviewAction').value.trim()
+        };
+
+        let res;
+        try {
+            res = await apiFetch('/api/vet/reviews', { method: 'POST', body: JSON.stringify(payload) });
+        } catch (e) {
+            showReviewAlert(e.message || 'Network error. Please try again.');
+            return;
+        }
+
+        if (!res.success) { showReviewAlert(res.message || 'Failed to save review.'); return; }
+
+        reviewModal.hide();
+        await Promise.all([loadSummary(), loadQueue()]);
+    }
+
+    function showReviewAlert(msg) {
+        const el = document.getElementById('reviewAlert');
+        el.textContent = msg;
+        el.classList.remove('d-none');
+    }
+
+    // ────────────────────────────────────────────────
+    // BADGE / DISPLAY HELPERS
+    // ────────────────────────────────────────────────
+    function resultClass(v) { return `result-${(v || 'unknown').toLowerCase()}`; }
+    function formatResult(v) { return capitalize((v || '').replace(/_/g, ' ')); }
+
+    function formatStatus(v) {
+        return { pending:'Pending', approved:'Approved', needs_more_checks:'Needs More Checks', confirmed:'Confirmed' }[v] || capitalize(v);
+    }
+
+    function statusIcon(v) {
+        return { pending:'⏳', approved:'✅', needs_more_checks:'🔍', confirmed:'🔬' }[v] || '';
+    }
+
+    // ────────────────────────────────────────────────
+    // PAGE LOAD
+    // ────────────────────────────────────────────────
+    window.addEventListener('load', async function () {
+        reviewModal = new bootstrap.Modal(document.getElementById('reviewModal'));
+        const user = await ensureVetSession();
+        if (!user) return;
+        await loadSummary();
+    });
+</script>
+</body>
+</html>

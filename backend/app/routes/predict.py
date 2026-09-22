@@ -184,7 +184,8 @@ def predict():
         fowlpox_prob    = float(predictions[1]) * 100
         healthy_prob    = float(predictions[2]) * 100
 
-        Detection.save_detection(
+        # [VET-FEEDBACK] capture returned id so result page can reference the record
+        detection_id = Detection.save_detection(
             user_id=user['id'] if user else None,
             username=username,
             image_name=unique_name,
@@ -206,7 +207,9 @@ def predict():
                 'healthy': round(healthy_prob, 2)
             },
             'disease_info': ADVICE[predicted_class],
-            'image_name': unique_name
+            'image_name': unique_name,
+            # [VET-FEEDBACK] added detection_id — single additive key
+            'detection_id': detection_id
         }), 200
 
     except Exception as exc:

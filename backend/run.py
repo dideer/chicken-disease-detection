@@ -2,6 +2,8 @@
 from app import create_app
 from app.models.user import User
 from app.models.detection import Detection
+# [VET-FEATURE] added VetReview import
+from app.models.vet_review import VetReview
 
 app = create_app()
 
@@ -9,6 +11,8 @@ app = create_app()
 try:
     User.create_table()
     Detection.create_table()
+    # [VET-FEATURE] added VetReview table creation
+    VetReview.create_table()
     User.ensure_default_admin()
     print("[INFO] All tables ready!")
 except Exception as exc:

@@ -444,6 +444,8 @@
                                     <th class="py-3">User</th>
                                     <th class="py-3">Result</th>
                                     <th class="py-3">Confidence</th>
+                                    <!-- [VET-FEEDBACK] added Vet column -->
+                                    <th class="py-3">Vet</th>
                                     <th class="py-3">Date & Time</th>
                                 </tr>
                             </thead>
@@ -594,12 +596,14 @@
 
                 if (result.success) {
                     // Save full result to localStorage
+                    // [VET-FEEDBACK] also persist detection_id for vet review lookup
                     localStorage.setItem('detectionResult', JSON.stringify({
                         disease: result.predicted_class,
                         confidence: result.confidence,
                         allConfidences: result.probabilities,
                         disease_info: result.disease_info,
-                        image_name: result.image_name
+                        image_name: result.image_name,
+                        detection_id: result.detection_id
                     }));
 
                     // Go to result page
@@ -686,6 +690,8 @@
                                     <small>${d.confidence}%</small>
                                 </div>
                             </td>
+                            <!-- [VET-FEEDBACK] vet status badge cell -->
+                            <td class="py-3">${vetBadge(d.vet_status)}</td>
                             <td class="py-3">
                                 <small class="text-muted">
                                     <i class="fas fa-clock me-1"></i>
@@ -697,7 +703,8 @@
                 } else {
                     tbody.innerHTML = `
                         <tr>
-                            <td colspan="5" 
+                            <!-- [VET-FEEDBACK] colspan updated from 5 to 6 -->
+                            <td colspan="6" 
                                 class="text-center py-4 text-muted">
                                 <i class="fas fa-inbox me-2"></i>
                                 No detections yet. Upload an image to start!
@@ -707,7 +714,8 @@
             } catch (error) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="5" 
+                        <!-- [VET-FEEDBACK] colspan updated from 5 to 6 -->
+                        <td colspan="6" 
                             class="text-center py-4 text-danger">
                             <i class="fas fa-exclamation-circle me-2"></i>
                             Failed to load history
@@ -719,6 +727,23 @@
         // ================================================
         // HELPER FUNCTIONS
         // ================================================
+        // [VET-FEEDBACK] vet status badge helper
+        function vetBadge(status) {
+            if (!status || status === 'pending') {
+                return '<span class="badge bg-secondary">⏳ Pending</span>';
+            }
+            if (status === 'approved') {
+                return '<span class="badge bg-success">✅ Approved</span>';
+            }
+            if (status === 'needs_more_checks') {
+                return '<span class="badge bg-warning text-dark">⚠️ Needs Checks</span>';
+            }
+            if (status === 'confirmed') {
+                return '<span class="badge bg-primary">✅ Confirmed</span>';
+            }
+            return '<span class="badge bg-secondary">⏳ Pending</span>';
+        }
+
         function formatDate(dateStr) {
             const date = new Date(dateStr);
             return date.toLocaleDateString() + ' ' + 

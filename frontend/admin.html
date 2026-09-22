@@ -41,6 +41,8 @@
         .metric-detections { background: linear-gradient(135deg, #294b63, #497f9d); }
         .metric-chickens { background: linear-gradient(135deg, #9a6117, #d89a2d); }
         .metric-diseases { background: linear-gradient(135deg, #7a1f23, #b83a40); }
+        /* [VET-FEATURE] added metric-vets color class */
+        .metric-vets { background: linear-gradient(135deg, #0c5a6e, #1a8fa8); }
     </style>
 </head>
 <body>
@@ -119,6 +121,15 @@
                     </div>
                 </div>
             </div>
+            <!-- [VET-FEATURE] added Veterinarians metric card -->
+            <div class="col-md-6 col-xl-3">
+                <div class="card metric-card metric-vets">
+                    <div class="card-body p-4">
+                        <div class="small text-uppercase opacity-75 mb-2">Veterinarians</div>
+                        <div class="metric-value" id="summaryVets">0</div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <section class="row g-4">
@@ -186,6 +197,8 @@
             document.getElementById('summaryDetections').textContent = summary.total_detections || 0;
             document.getElementById('summaryChickens').textContent = summary.total_chickens_detected || 0;
             document.getElementById('summaryDiseases').textContent = summary.total_disease_cases || 0;
+            // [VET-FEATURE] populate veterinarians count
+            document.getElementById('summaryVets').textContent = summary.total_vets || 0;
         }
 
         window.addEventListener('load', async function () {

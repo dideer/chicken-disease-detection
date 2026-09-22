@@ -167,10 +167,16 @@
                     successDiv.classList.remove('d-none');
                     
                     // Redirect to dashboard after 1 second
+                    // [VET-FEATURE] added vet redirect branch
                     setTimeout(() => {
-                        window.location.href = response.user && response.user.is_admin
-                            ? 'admins.html'
-                            : 'dashboard.html';
+                        const role = response.user && response.user.role;
+                        if (role === 'admin') {
+                            window.location.href = 'admins.html';
+                        } else if (role === 'vet') {
+                            window.location.href = 'vet.html';
+                        } else {
+                            window.location.href = 'dashboard.html';
+                        }
                     }, 1000);
                 } else {
                     // Show error message from API

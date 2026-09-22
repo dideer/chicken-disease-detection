@@ -79,6 +79,8 @@
                     <select id="userRoleFilter" class="form-select">
                         <option value="">All Roles</option>
                         <option value="admin">Admin</option>
+                        <!-- [VET-FEATURE] added Veterinarian option -->
+                        <option value="vet">Veterinarian</option>
                         <option value="user">User</option>
                     </select>
                     <select id="userStatusFilter" class="form-select">
@@ -140,6 +142,8 @@
                                 <label class="form-label">Role</label>
                                 <select id="userRoleField" class="form-select" required>
                                     <option value="user">User</option>
+                                    <!-- [VET-FEATURE] added Veterinarian option -->
+                                    <option value="vet">Veterinarian</option>
                                     <option value="admin">Admin</option>
                                 </select>
                             </div>
@@ -230,7 +234,7 @@
                         </div>
                     </td>
                     <td>${escapeHtml(user.email)}</td>
-                    <td><span class="badge ${user.role === 'admin' ? 'bg-warning text-dark' : 'bg-light text-dark'} pill-badge">${capitalize(user.role)}</span></td>
+                    <td><span class="badge ${user.role === 'admin' ? 'bg-warning text-dark' : user.role === 'vet' ? 'bg-info text-dark' : 'bg-light text-dark'} pill-badge">${user.role === 'vet' ? 'Veterinarian' : capitalize(user.role)}</span></td>
                     <td><span class="badge ${user.status === 'active' ? 'bg-success-subtle text-success-emphasis' : 'bg-secondary-subtle text-secondary-emphasis'} pill-badge">${capitalize(user.status)}</span></td>
                     <td>${formatDate(user.created_at)}</td>
                     <td class="text-end">

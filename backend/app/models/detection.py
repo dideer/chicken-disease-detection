@@ -92,6 +92,7 @@ class Detection:
         where_clause = f"WHERE {' AND '.join(conditions)}" if conditions else ''
 
         try:
+            # [VET-FEEDBACK] LEFT JOIN to latest vet review per detection
             cur.execute(f"""
                 SELECT
                     d.id,
@@ -105,9 +106,30 @@ class Detection:
                     d.fowlpox_prob,
                     d.healthy_prob,
                     d.chicken_count,
-                    d.detected_at
+                    d.detected_at,
+                    vr.status            AS vet_status,
+                    vr.risk_level        AS vet_risk_level,
+                    vr.diagnosis_notes   AS vet_notes,
+                    vr.recommended_action AS vet_action,
+                    vr.reviewed_at       AS vet_reviewed_at,
+                    vu.username          AS vet_username,
+                    vr.needs_lab_test    AS vet_needs_lab_test,
+                    vr.needs_farm_visit  AS vet_needs_farm_visit,
+                    vr.needs_medication_change AS vet_needs_medication_change
                 FROM detections d
                 LEFT JOIN users u ON u.id = d.user_id
+                LEFT JOIN LATERAL (
+                    SELECT r.status, r.risk_level, r.diagnosis_notes,
+                           r.recommended_action, r.reviewed_at,
+                           r.vet_id,
+                           r.needs_lab_test, r.needs_farm_visit,
+                           r.needs_medication_change
+                    FROM vet_reviews r
+                    WHERE r.detection_id = d.id
+                    ORDER BY r.reviewed_at DESC
+                    LIMIT 1
+                ) vr ON TRUE
+                LEFT JOIN users vu ON vu.id = vr.vet_id
                 {where_clause}
                 ORDER BY d.detected_at DESC;
             """, params)
@@ -124,7 +146,17 @@ class Detection:
                 'fowlpox_prob': float(row[8] or 0),
                 'healthy_prob': float(row[9] or 0),
                 'chicken_count': int(row[10] or 0),
-                'detected_at': row[11]
+                'detected_at': row[11],
+                # [VET-FEEDBACK] new vet review fields — None when no review exists
+                'vet_status': row[12],
+                'vet_risk_level': row[13],
+                'vet_notes': row[14],
+                'vet_action': row[15],
+                'vet_reviewed_at': str(row[16]) if row[16] else None,
+                'vet_username': row[17],
+                'vet_needs_lab_test': bool(row[18]) if row[18] is not None else False,
+                'vet_needs_farm_visit': bool(row[19]) if row[19] is not None else False,
+                'vet_needs_medication_change': bool(row[20]) if row[20] is not None else False,
             } for row in rows]
         except Exception as exc:
             print(f"[ERROR] Failed to fetch detections: {exc}")

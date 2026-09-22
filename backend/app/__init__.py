@@ -37,10 +37,13 @@ def create_app():
     from app.routes.admin import admin_bp
     from app.routes.auth import auth_bp
     from app.routes.predict import predict_bp
+    # [VET-FEATURE] added vet_bp blueprint registration
+    from app.routes.vet import vet_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(predict_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(vet_bp)
 
     @app.route('/')
     def index():

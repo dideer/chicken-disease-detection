@@ -17,7 +17,7 @@ def _clean_user_payload(data, require_password):
     if not username or not email:
         return None, 'Username and email are required.'
     if role not in User.VALID_ROLES:
-        return None, 'Role must be admin or user.'
+        return None, 'Role must be admin, vet, or user.'
     if status not in User.VALID_STATUSES:
         return None, 'Status must be active or inactive.'
     if require_password and not password:
@@ -47,10 +47,12 @@ def _serialize_user(user):
 @require_auth(admin_only=True)
 def admin_summary():
     detection_summary = Detection.get_admin_summary()
+    # [VET-FEATURE] added total_vets to summary
     return jsonify({
         'success': True,
         'summary': {
             'total_users': User.get_total_users(),
+            'total_vets': User.get_total_users_by_role('vet'),
             **detection_summary
         }
     }), 200
